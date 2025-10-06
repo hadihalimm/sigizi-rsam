@@ -19,10 +19,7 @@ import {
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 
-interface Option {
-  value: string;
-  label: string;
-}
+import { Option } from "./multi-select";
 
 interface SelectWithSearchProps {
   options: Option[];
