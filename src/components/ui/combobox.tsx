@@ -51,7 +51,7 @@ export function Combobox({
         asChild
         disabled={disabled}
         className={cn(
-          "w-full font-normal hover:bg-background hover:text-foreground",
+          "w-full font-normal hover:bg-background hover:text-foreground h-auto text-start",
           className
         )}
       >
@@ -63,7 +63,7 @@ export function Combobox({
         >
           <span
             className={cn(
-              "truncate",
+              " whitespace-normal break-words",
               !selectedLabel && "text-muted-foreground"
             )}
           >
