@@ -1,3 +1,4 @@
+import "../server/orpc.server";
 import "./globals.css";
 
 import type { Metadata } from "next";
