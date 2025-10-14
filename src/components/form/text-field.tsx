@@ -23,6 +23,7 @@ export default function TextField({
       <Input
         id={field.name}
         type="text"
+        value={field.state.value}
         placeholder={placeholder}
         autoComplete="off"
         className={cn("", className)}
