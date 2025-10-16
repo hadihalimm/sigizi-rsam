@@ -4,8 +4,9 @@ import z from "zod";
 
 import db from "@/db";
 import { bahanMakanan } from "@/db/schema";
-import { handleORPCError } from "@/lib/utils";
 import { BahanMakananCreateSchema } from "@/schemas/bahan-makanan";
+
+import { handleORPCError } from "../utils";
 
 export const bahanMakananProcedure = {
   getAll: os.route({ path: "/", method: "GET" }).handler(async () => {
