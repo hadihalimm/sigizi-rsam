@@ -31,32 +31,33 @@ const BahanMakananForm = ({ initialData }: BahanMakananFormProps) => {
       name: initialData?.name ?? "",
       category: initialData?.category ?? "",
       unit: initialData?.unit ?? "",
-      standard: initialData?.standard.toString() ?? "",
+      standard: initialData?.standard ?? "",
     },
     validators: {
       onChange: BahanMakananCreateSchema,
     },
     onSubmit: async ({ value }) => {
       try {
+        const payload = BahanMakananCreateSchema.parse(value);
         if (initialData) {
           await update.mutateAsync({
             params: {
               id: initialData.id,
             },
             body: {
-              name: value.name,
-              category: value.category,
-              unit: value.unit,
-              standard: value.standard,
+              name: payload.name,
+              category: payload.category,
+              unit: payload.unit,
+              standard: payload.standard,
             },
           });
           toast.success("Bahan makanan berhasil diupdate");
         } else {
           await create.mutateAsync({
-            name: value.name,
-            category: value.category,
-            unit: value.unit,
-            standard: value.standard,
+            name: payload.name,
+            category: payload.category,
+            unit: payload.unit,
+            standard: payload.standard,
           });
           toast.success("Bahan makanan berhasil ditambahkan");
         }
@@ -121,7 +122,7 @@ const BahanMakananForm = ({ initialData }: BahanMakananFormProps) => {
           {(field) => (
             <Field>
               <FieldLabel htmlFor={field.name}>Standar</FieldLabel>
-              <field.TextField />
+              <field.TextField valueType="number" />
               {isFieldInvalid(field.state.meta) && (
                 <FieldError errors={field.state.meta.errors} />
               )}

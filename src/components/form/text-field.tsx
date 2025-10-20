@@ -28,8 +28,20 @@ export default function TextField({
   const field = useFieldContext<string | number>();
 
   const handleValueChange = (value: string) => {
-    const typedValue = valueType === "number" ? Number(value) : value;
-    field.handleChange(typedValue);
+    if (valueType === "number") {
+      // Allow intermediate states while typing
+      if (value === "" || value === "-" || value.endsWith(".")) {
+        // Keep as string for intermediate typing states
+        field.handleChange(value as string | number);
+      } else {
+        const numValue = Number(value);
+        if (!isNaN(numValue)) {
+          field.handleChange(numValue);
+        }
+      }
+    } else {
+      field.handleChange(value);
+    }
   };
 
   return (
@@ -37,7 +49,7 @@ export default function TextField({
       {addonLeft && <InputGroupAddon>{addonLeft}</InputGroupAddon>}
       <InputGroupInput
         id={field.name}
-        type="text"
+        type={valueType === "string" ? "text" : "number"}
         value={field.state.value.toString()}
         placeholder={placeholder}
         autoComplete="off"

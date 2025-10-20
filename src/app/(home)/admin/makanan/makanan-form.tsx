@@ -56,11 +56,11 @@ const MakananForm = ({ initialData }: MakananFormProps) => {
   const form = useAppForm({
     defaultValues: {
       name: initialData?.makanan.name ?? "",
-      makananTypeId: initialData?.makanan.makananTypeId.toString() ?? "",
+      makananTypeId: initialData?.makanan.makananTypeId ?? "",
       makananResepDetail: initialData?.makananResepDetail.map(
         (bahanMakanan) => ({
-          bahanMakananId: bahanMakanan.id.toString(),
-          quantity: bahanMakanan.quantity.toString(),
+          bahanMakananId: bahanMakanan.id,
+          quantity: bahanMakanan.quantity,
         })
       ) ?? [
         {
@@ -74,23 +74,24 @@ const MakananForm = ({ initialData }: MakananFormProps) => {
     },
     onSubmit: async ({ value }) => {
       try {
+        const payload = MakananCreateSchema.parse(value);
         if (initialData) {
           await update.mutateAsync({
             params: {
               id: initialData.makanan.id,
             },
             body: {
-              name: value.name,
-              makananTypeId: value.makananTypeId,
-              makananResepDetail: value.makananResepDetail,
+              name: payload.name,
+              makananTypeId: payload.makananTypeId,
+              makananResepDetail: payload.makananResepDetail,
             },
           });
           toast.success("Makanan berhasil diupdate");
         } else {
           await create.mutateAsync({
-            name: value.name,
-            makananTypeId: value.makananTypeId,
-            makananResepDetail: value.makananResepDetail,
+            name: payload.name,
+            makananTypeId: payload.makananTypeId,
+            makananResepDetail: payload.makananResepDetail,
           });
           toast.success("Makanan berhasil ditambahkan");
         }
@@ -128,6 +129,7 @@ const MakananForm = ({ initialData }: MakananFormProps) => {
             <Field>
               <FieldLabel>Jenis makanan</FieldLabel>
               <field.SelectField
+                valueType="number"
                 options={makananTypeList.map((mt) => ({
                   label: mt.code,
                   value: mt.id.toString(),
@@ -152,6 +154,7 @@ const MakananForm = ({ initialData }: MakananFormProps) => {
                           {(subField) => {
                             return (
                               <subField.SelectSearchField
+                                valueType="number"
                                 options={bahanMakananList.map((bahan) => ({
                                   label: bahan.name,
                                   value: bahan.id.toString(),
@@ -170,13 +173,14 @@ const MakananForm = ({ initialData }: MakananFormProps) => {
                             return (
                               <div className="flex gap-x-1 items-center">
                                 <subField.TextField
+                                  valueType="number"
                                   placeholder="Jumlah..."
                                   addonRight={
                                     <InputGroupText>
                                       {field.state.value[idx] &&
                                         bahanMakananList.find(
                                           (bahan) =>
-                                            bahan.id.toString() ===
+                                            bahan.id ===
                                             field.state.value[idx]
                                               .bahanMakananId
                                         )?.unit}
