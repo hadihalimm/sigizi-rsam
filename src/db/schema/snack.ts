@@ -4,6 +4,7 @@ import {
   pgTable,
   serial,
   text,
+  unique,
 } from "drizzle-orm/pg-core";
 
 import { bahanMakanan } from "./bahan-makanan";
@@ -15,33 +16,45 @@ export const snack = pgTable("snack", {
   name: text("name").notNull(),
 });
 
-export const snackMakananType = pgTable("snack_makanan_type", {
-  id: serial("id").primaryKey(),
-  snackId: integer("snack_id")
-    .notNull()
-    .references(() => snack.id, { onDelete: "cascade" }),
-  makananTypeId: integer("makanan_type_id")
-    .notNull()
-    .references(() => makananType.id, { onDelete: "no action" }),
-});
+export const snackMakananType = pgTable(
+  "snack_makanan_type",
+  {
+    id: serial("id").primaryKey(),
+    snackId: integer("snack_id")
+      .notNull()
+      .references(() => snack.id, { onDelete: "cascade" }),
+    makananTypeId: integer("makanan_type_id")
+      .notNull()
+      .references(() => makananType.id, { onDelete: "no action" }),
+  },
+  (t) => [unique().on(t.snackId, t.makananTypeId)]
+);
 
-export const snackDiet = pgTable("snack_diet", {
-  id: serial("id").primaryKey(),
-  snackId: integer("snack_id")
-    .notNull()
-    .references(() => snack.id, { onDelete: "cascade" }),
-  dietId: integer("diet_id")
-    .notNull()
-    .references(() => diet.id, { onDelete: "no action" }),
-});
+export const snackDiet = pgTable(
+  "snack_diet",
+  {
+    id: serial("id").primaryKey(),
+    snackId: integer("snack_id")
+      .notNull()
+      .references(() => snack.id, { onDelete: "cascade" }),
+    dietId: integer("diet_id")
+      .notNull()
+      .references(() => diet.id, { onDelete: "no action" }),
+  },
+  (t) => [unique().on(t.snackId, t.dietId)]
+);
 
-export const snackResepDetail = pgTable("snack_resep_detail", {
-  id: serial("id").primaryKey(),
-  snackId: integer("snack_id")
-    .notNull()
-    .references(() => snack.id, { onDelete: "cascade" }),
-  bahanMakananId: integer("bahan_makanan_id")
-    .notNull()
-    .references(() => bahanMakanan.id, { onDelete: "cascade" }),
-  quantity: doublePrecision("quantity").notNull(),
-});
+export const snackResepDetail = pgTable(
+  "snack_resep_detail",
+  {
+    id: serial("id").primaryKey(),
+    snackId: integer("snack_id")
+      .notNull()
+      .references(() => snack.id, { onDelete: "cascade" }),
+    bahanMakananId: integer("bahan_makanan_id")
+      .notNull()
+      .references(() => bahanMakanan.id, { onDelete: "cascade" }),
+    quantity: doublePrecision("quantity").notNull(),
+  },
+  (t) => [unique().on(t.snackId, t.bahanMakananId)]
+);
