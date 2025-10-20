@@ -10,6 +10,7 @@ import {
 import { useFieldContext } from ".";
 
 interface TextFieldProps extends InputHTMLAttributes<HTMLInputElement> {
+  valueType?: "string" | "number";
   placeholder?: string;
   addonLeft?: React.ReactNode;
   addonRight?: React.ReactNode;
@@ -17,13 +18,19 @@ interface TextFieldProps extends InputHTMLAttributes<HTMLInputElement> {
 }
 
 export default function TextField({
+  valueType = "string",
   placeholder,
   addonLeft,
   addonRight,
   className,
   ...inputProps
 }: TextFieldProps) {
-  const field = useFieldContext<string>();
+  const field = useFieldContext<string | number>();
+
+  const handleValueChange = (value: string) => {
+    const typedValue = valueType === "number" ? Number(value) : value;
+    field.handleChange(typedValue);
+  };
 
   return (
     <InputGroup>
@@ -31,11 +38,11 @@ export default function TextField({
       <InputGroupInput
         id={field.name}
         type="text"
-        value={field.state.value}
+        value={field.state.value.toString()}
         placeholder={placeholder}
         autoComplete="off"
         className={cn("", className)}
-        onChange={(e) => field.handleChange(e.target.value)}
+        onChange={(e) => handleValueChange(e.target.value)}
         {...inputProps}
       />
       {addonRight && (

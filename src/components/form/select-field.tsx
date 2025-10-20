@@ -19,30 +19,33 @@ import {
 import { useFieldContext } from ".";
 
 interface SelectFieldProps {
+  valueType?: "string" | "number";
   options: Option[];
   placeholder?: string;
   disabled?: boolean;
   className?: string;
-  onValueChange?: (value: string) => void;
+  onValueChange?: (value: string | number) => void;
 }
 
 export function SelectField({
   options,
+  valueType = "string",
   placeholder,
   disabled,
   className,
   onValueChange,
 }: SelectFieldProps) {
-  const field = useFieldContext<string>();
+  const field = useFieldContext<string | number>();
 
   const handleValueChange = (value: string) => {
-    field.handleChange(value);
-    onValueChange?.(value);
+    const typedValue = valueType === "number" ? Number(value) : value;
+    field.handleChange(typedValue);
+    onValueChange?.(typedValue);
   };
 
   return (
     <Select
-      value={field.state.value}
+      value={String(field.state.value)}
       onValueChange={handleValueChange}
       disabled={disabled}
     >
@@ -67,30 +70,33 @@ export function SelectField({
 
 interface SelectSearchFieldProps {
   options: Option[];
+  valueType?: "string" | "number";
   placeholder?: string;
   disabled?: boolean;
   className?: string;
-  onValueChange?: (value: string) => void;
+  onValueChange?: (value: string | number) => void;
 }
 
 export function SelectSearchField({
   options,
+  valueType = "string",
   placeholder,
   disabled,
   className,
   onValueChange,
 }: SelectSearchFieldProps) {
-  const field = useFieldContext<string>();
+  const field = useFieldContext<string | number>();
 
   const handleValueChange = (value: string) => {
-    field.handleChange(value);
-    onValueChange?.(value);
+    const typedValue = valueType === "number" ? Number(value) : value;
+    field.handleChange(typedValue);
+    onValueChange?.(typedValue);
   };
 
   return (
     <Combobox
       options={options}
-      value={field.state.value}
+      value={String(field.state.value)}
       placeholder={placeholder}
       disabled={disabled}
       onChange={handleValueChange}
@@ -101,28 +107,34 @@ export function SelectSearchField({
 
 interface MultiSelectFieldProps {
   options: Option[];
+  valueType?: "string" | "number";
   placeholder?: string;
   disabled?: boolean;
   className?: string;
-  onValueChange?: (value: string[]) => void;
+  onValueChange?: (value: string[] | number[]) => void;
 }
 
 export function MultiSelectField({
   options,
+  valueType = "string",
   placeholder,
   disabled,
   className,
   onValueChange,
 }: MultiSelectFieldProps) {
-  const field = useFieldContext<string[]>();
+  const field = useFieldContext<string[] | number[]>();
 
   const handleValueChange = (selected: string[]) => {
-    field.handleChange(selected);
-    onValueChange?.(selected);
+    const typedValue = valueType === "number" ? selected.map(Number) : selected;
+    field.handleChange(typedValue);
+    onValueChange?.(typedValue);
   };
 
   return (
-    <MultiSelect values={field.state.value} onValuesChange={handleValueChange}>
+    <MultiSelect
+      values={field.state.value.map(String)}
+      onValuesChange={handleValueChange}
+    >
       <MultiSelectTrigger
         disabled={disabled}
         className={cn("w-full", className)}
