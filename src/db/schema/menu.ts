@@ -1,4 +1,11 @@
-import { integer, pgTable, serial, text, timestamp } from "drizzle-orm/pg-core";
+import {
+  integer,
+  pgTable,
+  serial,
+  text,
+  timestamp,
+  unique,
+} from "drizzle-orm/pg-core";
 
 import { makanan } from "./makanan";
 import { snack } from "./snack";
@@ -25,22 +32,30 @@ export const menu = pgTable("menu", {
     .references(() => menuBook.id, { onDelete: "cascade" }),
 });
 
-export const menuMakananDetail = pgTable("menu_makanan_detail", {
-  id: serial("id").primaryKey(),
-  menuId: integer("menu_id")
-    .notNull()
-    .references(() => menu.id, { onDelete: "cascade" }),
-  makananId: integer("makanan_id")
-    .notNull()
-    .references(() => makanan.id, { onDelete: "cascade" }),
-});
+export const menuMakananDetail = pgTable(
+  "menu_makanan_detail",
+  {
+    id: serial("id").primaryKey(),
+    menuId: integer("menu_id")
+      .notNull()
+      .references(() => menu.id, { onDelete: "cascade" }),
+    makananId: integer("makanan_id")
+      .notNull()
+      .references(() => makanan.id, { onDelete: "cascade" }),
+  },
+  (t) => [unique().on(t.menuId, t.makananId)]
+);
 
-export const menuSnackDetail = pgTable("menu_snack_detail", {
-  id: serial("id").primaryKey(),
-  menuId: integer("menu_id")
-    .notNull()
-    .references(() => menu.id, { onDelete: "cascade" }),
-  snackId: integer("snack_id")
-    .notNull()
-    .references(() => snack.id, { onDelete: "cascade" }),
-});
+export const menuSnackDetail = pgTable(
+  "menu_snack_detail",
+  {
+    id: serial("id").primaryKey(),
+    menuId: integer("menu_id")
+      .notNull()
+      .references(() => menu.id, { onDelete: "cascade" }),
+    snackId: integer("snack_id")
+      .notNull()
+      .references(() => snack.id, { onDelete: "cascade" }),
+  },
+  (t) => [unique().on(t.menuId, t.snackId)]
+);
