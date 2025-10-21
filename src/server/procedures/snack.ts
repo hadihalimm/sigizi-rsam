@@ -140,9 +140,12 @@ export const snackProcedure = {
     .handler(async ({ input }) => {
       try {
         return await db.transaction(async (tx) => {
-          await tx.update(snack).set({
-            name: input.body.name,
-          });
+          await tx
+            .update(snack)
+            .set({
+              name: input.body.name,
+            })
+            .where(eq(snack.id, input.params.id));
 
           if (input.body.makananTypeIds.length === 0) {
             await tx
@@ -298,11 +301,7 @@ export const snackProcedure = {
 
   delete: os
     .route({ path: "/{id}", method: "DELETE" })
-    .input(
-      z.object({
-        id: z.number(),
-      })
-    )
+    .input(z.object({ id: z.number() }))
     .handler(async ({ input }) => {
       try {
         const [deletedRow] = await db
