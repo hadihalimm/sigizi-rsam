@@ -1,6 +1,6 @@
 import * as schema from "@/db/schema";
 
-export type Alergi = typeof schema.user.$inferSelect;
+export type Alergi = typeof schema.alergi.$inferSelect;
 
 export type BahanMakanan = typeof schema.bahanMakanan.$inferSelect;
 

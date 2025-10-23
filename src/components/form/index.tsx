@@ -1,5 +1,6 @@
 import { createFormHook, createFormHookContexts } from "@tanstack/react-form";
 
+import DateField from "./date-field";
 import {
   MultiSelectField,
   SelectField,
@@ -17,6 +18,7 @@ export const { useAppForm, withForm, withFieldGroup } = createFormHook({
     SelectField,
     SelectSearchField,
     MultiSelectField,
+    DateField,
   },
   formComponents: { SubscribeButton },
   fieldContext,
