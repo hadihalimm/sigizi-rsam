@@ -38,3 +38,12 @@ export type Snack = typeof schema.snack.$inferSelect;
 export type SnackMakananType = typeof schema.snackMakananType.$inferSelect;
 export type SnackDiet = typeof schema.snackDiet.$inferSelect;
 export type SnackResepDetail = typeof schema.snackResepDetail.$inferSelect;
+
+export type DailyPermintaanMakananDetail = {
+  dailyPermintaanMakanan: DailyPermintaanMakanan;
+  pasien: Pasien;
+  ruangan: Ruangan;
+  bangsal: Bangsal;
+  makananType: MakananType;
+  dailyPermintaanMakananDietList: Diet[];
+};
