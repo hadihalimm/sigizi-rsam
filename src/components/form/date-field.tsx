@@ -13,10 +13,15 @@ import { useFieldContext } from ".";
 
 interface DateFieldProps {
   placeholder?: string;
+  disabled?: boolean;
   className?: string;
 }
 
-export default function DateField({ placeholder, className }: DateFieldProps) {
+export default function DateField({
+  placeholder,
+  disabled,
+  className,
+}: DateFieldProps) {
   const field = useFieldContext<Date>();
   const [open, setOpen] = useState(false);
 
@@ -27,7 +32,11 @@ export default function DateField({ placeholder, className }: DateFieldProps) {
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild className={cn("w-full", className)}>
+      <PopoverTrigger
+        asChild
+        className={cn("w-full", className)}
+        disabled={disabled}
+      >
         <Button
           variant="outline"
           data-empty={!field.state.value}
@@ -47,6 +56,7 @@ export default function DateField({ placeholder, className }: DateFieldProps) {
           selected={field.state.value}
           onSelect={(value) => handleValueChange(value)}
           captionLayout="dropdown"
+          disabled={disabled}
         />
       </PopoverContent>
     </Popover>
