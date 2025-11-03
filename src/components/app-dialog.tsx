@@ -72,9 +72,7 @@ export default function AppDialog({
           <DialogTitle>{title}</DialogTitle>
           {description && <DialogDescription>{description}</DialogDescription>}
         </DialogHeader>
-        <ScrollArea className="max-h-[calc(100vh/1.5)] overflow-y-auto">
-          {children}
-        </ScrollArea>
+        <ScrollArea className="max-h-[calc(100vh/1.5)]">{children}</ScrollArea>
       </DialogContent>
     </Dialog>
   );
