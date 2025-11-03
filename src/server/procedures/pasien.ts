@@ -183,4 +183,19 @@ export const pasienProcedure = {
         handleORPCError(error);
       }
     }),
+
+  findByMedicalRecordNumber: os
+    .route({ path: "/{id}", method: "GET" })
+    .input(z.object({ medicalRecordNumber: z.string() }))
+    .handler(async ({ input }) => {
+      try {
+        const row = await db.query.pasien.findFirst({
+          where: eq(pasien.medicalRecordNumber, input.medicalRecordNumber),
+        });
+
+        return row;
+      } catch (error) {
+        handleORPCError(error);
+      }
+    }),
 };
