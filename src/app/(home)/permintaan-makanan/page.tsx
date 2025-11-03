@@ -1,0 +1,30 @@
+import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
+
+import { getQueryClient } from "@/lib/get-query-client";
+import { orpc } from "@/server/orpc";
+
+import PermintaanMakananLog from "./permintaan-log";
+import PermintaanMakananTable from "./permintaan-table";
+
+const PermintaanMakananPage = () => {
+  const todayDate = new Date();
+  const queryClient = getQueryClient();
+  void queryClient.prefetchQuery(
+    orpc.dailyPermintaanMakanan.getAll.queryOptions({
+      input: {
+        date: todayDate.toLocaleDateString("en-CA"),
+      },
+    })
+  );
+  return (
+    <main className="flex flex-col gap-12">
+      <h1 className="font-semibold text-2xl">Daftar Permintaan Makanan</h1>
+      <HydrationBoundary state={dehydrate(queryClient)}>
+        <PermintaanMakananTable />
+        <PermintaanMakananLog />
+      </HydrationBoundary>
+    </main>
+  );
+};
+
+export default PermintaanMakananPage;
