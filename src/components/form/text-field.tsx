@@ -17,6 +17,11 @@ interface TextFieldProps extends InputHTMLAttributes<HTMLInputElement> {
   className?: string;
 }
 
+const valueTypeMap = new Map<string, string>([
+  ["string", "text"],
+  ["number", "number"],
+]);
+
 export default function TextField({
   valueType = "string",
   placeholder,
@@ -49,7 +54,7 @@ export default function TextField({
       {addonLeft && <InputGroupAddon>{addonLeft}</InputGroupAddon>}
       <InputGroupInput
         id={field.name}
-        type={valueType === "string" ? "text" : "number"}
+        type={valueTypeMap.get(valueType)}
         value={field.state.value.toString()}
         placeholder={placeholder}
         autoComplete="off"
