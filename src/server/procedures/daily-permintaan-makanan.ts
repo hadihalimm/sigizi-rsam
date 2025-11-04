@@ -45,6 +45,7 @@ export const dailyPermintaanMakananProcedure = {
             dailyPermintaanMakanan: group[0].daily_permintaan_makanan,
             pasien: group[0].pasien,
             ruangan: group[0].ruangan,
+            treatmentClass: group[0].treatment_class,
             bangsal: group[0].bangsal,
             makananType: group[0].makanan_type,
             dailyPermintaanMakananDietList: Array.from(
