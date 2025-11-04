@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 import { orpc } from "@/server/orpc";
 import { useDateStore } from "@/stores/use-date-store";
 
-const PermintaanMakananLog = () => {
+const PermintaanMakananLog = ({ className }: { className?: string }) => {
   const { todayDate } = useDateStore();
   const { data: logs } = useSuspenseQuery(
     orpc.dailyPermintaanMakananLog.getAll.queryOptions({
@@ -29,7 +29,10 @@ const PermintaanMakananLog = () => {
   const { data: dietList } = useSuspenseQuery(orpc.diet.getAll.queryOptions());
 
   return (
-    <div className="flex flex-col lg:w-1/2 overflow-auto border">
+    <div className={cn("flex flex-col border rounded-md", className)}>
+      <h2 className="font-medium bg-primary/80 rounded-md w-fit px-2 py-1 m-4">
+        Log Perubahan Permintaan
+      </h2>
       {logs.map((log) => {
         const { oldValue, newValue } = log.dailyPermintaanMakananLog;
         const oldBangsal = bangsalList.find(

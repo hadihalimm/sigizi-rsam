@@ -33,7 +33,7 @@ const DietRekap = () => {
   });
 
   return (
-    <div className="flex flex-col h-fit border rounded-md p-4 gap-6">
+    <div className="flex flex-col border rounded-md p-4 gap-6">
       <h2 className="font-medium bg-primary/80 rounded-md w-fit px-2 py-1">
         Rekap Diet
       </h2>
