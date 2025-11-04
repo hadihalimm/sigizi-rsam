@@ -13,6 +13,7 @@ import {
   makananType,
   pasien,
   ruangan,
+  treatmentClass,
 } from "@/db/schema";
 import * as schema from "@/db/schema";
 import { DailyPermintaanMakananCreateSchema } from "@/schemas/daily-permintaan-makanan";
@@ -31,7 +32,6 @@ export const dailyPermintaanMakananProcedure = {
     )
     .handler(async ({ input }) => {
       try {
-        console.log(input);
         const rows = await baseQuery(db).where(
           and(
             eq(dailyPermintaanMakanan.day, new Date(input.date)),
@@ -303,6 +303,7 @@ function baseQuery(database: NodePgDatabase<typeof schema>) {
     .innerJoin(pasien, eq(dailyPermintaanMakanan.pasienId, pasien.id))
     .innerJoin(ruangan, eq(dailyPermintaanMakanan.ruanganId, ruangan.id))
     .innerJoin(bangsal, eq(ruangan.bangsalId, bangsal.id))
+    .innerJoin(treatmentClass, eq(treatmentClass.id, ruangan.treatmentClassId))
     .innerJoin(
       makananType,
       eq(dailyPermintaanMakanan.makananTypeId, makananType.id)

@@ -3,8 +3,12 @@ import { eq } from "drizzle-orm";
 import z from "zod";
 
 import db from "@/db";
-import { bangsal, ruangan } from "@/db/schema";
-import { BangsalCreateSchema, RuanganCreateSchema } from "@/schemas/ruangan";
+import { bangsal, ruangan, treatmentClass } from "@/db/schema";
+import {
+  BangsalCreateSchema,
+  RuanganCreateSchema,
+  TreatmentClassCreateSchema,
+} from "@/schemas/ruangan";
 
 import { handleORPCError } from "../utils";
 
@@ -149,4 +153,32 @@ export const bangsalProcedure = {
   syncFromSimrs: os
     .route({ path: "/", method: "POST" })
     .handler(async ({ input }) => {}),
+};
+
+export const treatmentClassProcedure = {
+  getAll: os.route({ path: "/", method: "GET" }).handler(async () => {
+    try {
+      const rows = await db.query.treatmentClass.findMany();
+
+      return rows;
+    } catch (error) {
+      handleORPCError(error);
+    }
+  }),
+
+  create: os
+    .route({ path: "/", method: "POST" })
+    .input(TreatmentClassCreateSchema)
+    .handler(async ({ input }) => {
+      try {
+        const [newRow] = await db
+          .insert(treatmentClass)
+          .values({ ...input })
+          .returning();
+
+        return newRow;
+      } catch (error) {
+        handleORPCError(error);
+      }
+    }),
 };
