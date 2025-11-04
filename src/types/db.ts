@@ -33,6 +33,7 @@ export type PasienAlergi = typeof schema.pasienAlergi.$inferSelect;
 
 export type Ruangan = typeof schema.ruangan.$inferSelect;
 export type Bangsal = typeof schema.bangsal.$inferSelect;
+export type TreatmentClass = typeof schema.treatmentClass.$inferInsert;
 
 export type Snack = typeof schema.snack.$inferSelect;
 export type SnackMakananType = typeof schema.snackMakananType.$inferSelect;
@@ -44,6 +45,7 @@ export type DailyPermintaanMakananDetail = {
   pasien: Pasien;
   ruangan: Ruangan;
   bangsal: Bangsal;
+  treatmentClass: TreatmentClass;
   makananType: MakananType;
   dailyPermintaanMakananDietList: Diet[];
 };
