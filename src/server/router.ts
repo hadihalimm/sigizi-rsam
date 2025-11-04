@@ -8,7 +8,11 @@ import { dietProcedure } from "./procedures/diet";
 import { makananProcedure, makananTypeProcedure } from "./procedures/makanan";
 import { menuBookProcedure, menuProcedure } from "./procedures/menu";
 import { pasienProcedure } from "./procedures/pasien";
-import { bangsalProcedure, ruanganProcedure } from "./procedures/ruangan";
+import {
+  bangsalProcedure,
+  ruanganProcedure,
+  treatmentClassProcedure,
+} from "./procedures/ruangan";
 import { snackProcedure } from "./procedures/snack";
 
 export const router = {
@@ -23,6 +27,7 @@ export const router = {
   alergi: alergiProcedure,
   bangsal: bangsalProcedure,
   ruangan: ruanganProcedure,
+  treatmentClass: treatmentClassProcedure,
   dailyPermintaanMakanan: dailyPermintaanMakananProcedure,
   dailyPermintaanMakananLog: dailyPermintaanMakananLogProcedure,
 };
