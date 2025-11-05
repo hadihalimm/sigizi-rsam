@@ -72,7 +72,10 @@ export function Combobox({
           <ChevronDownIcon className="ml-2 size-4 shrink-0 text-muted-foreground opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0">
+      <PopoverContent
+        className="w-[var(--radix-popover-trigger-width)] p-0"
+        onWheel={(e) => e.stopPropagation()}
+      >
         <Command>
           <CommandInput placeholder="Search..." />
           <CommandList>
