@@ -83,7 +83,7 @@ export const dailyPermintaanMakananProcedure = {
             })
             .returning();
 
-          const permintaanDietInput = input.dietIds.map((id) => ({
+          const permintaanDietInput = input.dietIds.sort().map((id) => ({
             dailyPermintaanMakananId: newPermintaan.id,
             dietId: id,
           }));
@@ -120,6 +120,7 @@ export const dailyPermintaanMakananProcedure = {
               dailyPermintaanMakanan: group[0].daily_permintaan_makanan,
               pasien: group[0].pasien,
               ruangan: group[0].ruangan,
+              treatmentClass: group[0].treatment_class,
               bangsal: group[0].bangsal,
               makananType: group[0].makanan_type,
               dailyPermintaanMakananDietList: Array.from(
@@ -169,7 +170,7 @@ export const dailyPermintaanMakananProcedure = {
               );
           }
 
-          const permintaanDietInput = input.body.dietIds.map((id) => ({
+          const permintaanDietInput = input.body.dietIds.sort().map((id) => ({
             dailyPermintaanMakananId: input.params.id,
             dietId: id,
           }));
@@ -190,6 +191,7 @@ export const dailyPermintaanMakananProcedure = {
               dailyPermintaanMakanan: group[0].daily_permintaan_makanan,
               pasien: group[0].pasien,
               ruangan: group[0].ruangan,
+              treatmentClass: group[0].treatment_class,
               bangsal: group[0].bangsal,
               makananType: group[0].makanan_type,
               dailyPermintaanMakananDietList: Array.from(
