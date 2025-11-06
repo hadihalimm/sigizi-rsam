@@ -63,6 +63,7 @@ const PermintaanMakananTable = () => {
   const createDialog = useAppDialog("createPermintaanMakanan");
   const updateDialog = useAppDialog("updatePermintaanMakanan");
   const deleteDialog = useAppAlertDialog("deletePermintaanMakanan");
+  const copyPermintaanDialog = useAppAlertDialog("copyPermintaan");
   const [selectedItem, setSelectedItem] = useState<(typeof data)[number]>();
 
   const columnHelper = createColumnHelper<(typeof data)[number]>();
@@ -169,6 +170,7 @@ const PermintaanMakananTable = () => {
     },
   });
   const deletePermintaanMakanan = dailyPermintaanMakananQuery.useDelete();
+  const copyFromYesterday = dailyPermintaanMakananQuery.useCopyFromYesterday();
 
   return (
     <div className="flex flex-col gap-4">
@@ -195,6 +197,20 @@ const PermintaanMakananTable = () => {
           </SelectTrigger>
         </Select>
       </div>
+      {data.length === 0 && (
+        <AppAlertDialog
+          id="copyPermintaan"
+          title="Copy permintaan makanan kemarin"
+          description="Semua data permintaan hari kemarin akan di-copy ke hari ini."
+          trigger={<Button className="w-fit">Copy permintaan kemarin</Button>}
+          actionClassName="bg-primary hover:bg-primary/90"
+          onAction={async () => {
+            await copyFromYesterday.mutateAsync({
+              date: todayDate.toLocaleDateString("en-CA"),
+            });
+          }}
+        />
+      )}
       <div className="flex gap-x-2 mt-4 items-end">
         <Field className="w-1/2">
           <FieldLabel>Cari permintaan makanan</FieldLabel>

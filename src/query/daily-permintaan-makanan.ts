@@ -45,6 +45,18 @@ const dailyPermintaanMakananQuery = {
       })
     );
   },
+
+  useCopyFromYesterday: () => {
+    return useMutation(
+      orpc.dailyPermintaanMakanan.copyFromYesterday.mutationOptions({
+        onSuccess: () => {
+          queryClient.invalidateQueries({
+            queryKey: orpc.dailyPermintaanMakanan.key(),
+          });
+        },
+      })
+    );
+  },
 };
 
 export { dailyPermintaanMakananQuery };

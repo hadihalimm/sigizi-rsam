@@ -1,4 +1,5 @@
 import { os } from "@orpc/server";
+import { subDays } from "date-fns";
 import { and, desc, eq, notInArray, sql } from "drizzle-orm";
 import { NodePgDatabase } from "drizzle-orm/node-postgres";
 import z from "zod";
@@ -249,6 +250,75 @@ export const dailyPermintaanMakananProcedure = {
         });
 
         return deletedRow;
+      } catch (error) {
+        handleORPCError(error);
+      }
+    }),
+
+  copyFromYesterday: os
+    .route({ path: "/", method: "POST" })
+    .input(z.object({ date: z.string() }))
+    .handler(async ({ input }) => {
+      try {
+        const todayDate = new Date(input.date);
+        const yesterdayDate = subDays(todayDate, 1);
+
+        return await db.transaction(async (tx) => {
+          const yesterdayRows = await tx
+            .select()
+            .from(dailyPermintaanMakanan)
+            .innerJoin(
+              dailyPermintaanMakananDiet,
+              eq(
+                dailyPermintaanMakanan.id,
+                dailyPermintaanMakananDiet.dailyPermintaanMakananId
+              )
+            )
+            .where(eq(dailyPermintaanMakanan.day, yesterdayDate));
+
+          const yesterdayResult = Array.from(
+            Map.groupBy(
+              yesterdayRows,
+              (row) => row.daily_permintaan_makanan.id
+            ),
+            ([, group]) => ({
+              dailyPermintaanMakanan: group[0].daily_permintaan_makanan,
+              dailyPermintaanMakananDietList: Array.from(
+                new Map(
+                  group.map((row) => [
+                    row.daily_permintaan_makanan_diet.id,
+                    { ...row.daily_permintaan_makanan_diet },
+                  ])
+                ).values()
+              ),
+            })
+          );
+
+          const newRows = await tx
+            .insert(dailyPermintaanMakanan)
+            .values(
+              yesterdayResult.map((item) => ({
+                day: todayDate,
+                pasienId: item.dailyPermintaanMakanan.pasienId,
+                ruanganId: item.dailyPermintaanMakanan.ruanganId,
+                makananTypeId: item.dailyPermintaanMakanan.makananTypeId,
+                isTerlambat: false,
+                note: item.dailyPermintaanMakanan.note,
+              }))
+            )
+            .returning({ id: dailyPermintaanMakanan.id });
+
+          await tx.insert(dailyPermintaanMakananDiet).values(
+            newRows.flatMap((newItem, index) =>
+              yesterdayResult[index].dailyPermintaanMakananDietList.map(
+                (diet) => ({
+                  dailyPermintaanMakananId: newItem.id,
+                  dietId: diet.dietId,
+                })
+              )
+            )
+          );
+        });
       } catch (error) {
         handleORPCError(error);
       }
