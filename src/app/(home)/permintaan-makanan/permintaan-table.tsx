@@ -63,7 +63,6 @@ const PermintaanMakananTable = () => {
   const createDialog = useAppDialog("createPermintaanMakanan");
   const updateDialog = useAppDialog("updatePermintaanMakanan");
   const deleteDialog = useAppAlertDialog("deletePermintaanMakanan");
-  const copyPermintaanDialog = useAppAlertDialog("copyPermintaan");
   const [selectedItem, setSelectedItem] = useState<(typeof data)[number]>();
 
   const columnHelper = createColumnHelper<(typeof data)[number]>();
