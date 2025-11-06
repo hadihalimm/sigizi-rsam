@@ -198,4 +198,30 @@ export const pasienProcedure = {
         handleORPCError(error);
       }
     }),
+
+  findFromSimrs: os
+    .route({ path: "/{mrn}", method: "GET" })
+    .input(z.object({ medicalRecordNumber: z.string() }))
+    .handler(async ({ input }) => {
+      try {
+        const response = await fetch(
+          `${process.env.SIMRS_URL}/pasien/kunjungan/${input.medicalRecordNumber}`,
+          {
+            headers: {
+              "X-Username": process.env.SIMRS_USERNAME ?? "",
+              "X-Password": process.env.SIMRS_PASSWORD ?? "",
+            },
+          }
+        );
+        const result = (await response.json()) as {
+          metadata: { code: number; message: string };
+          response: { nomr: string; nama: string; tgl_lahir: string };
+        };
+        if (result.metadata.code === 400) return undefined;
+
+        return result.response;
+      } catch (error) {
+        handleORPCError(error);
+      }
+    }),
 };
