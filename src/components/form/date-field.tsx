@@ -57,6 +57,7 @@ export default function DateField({
           onSelect={(value) => handleValueChange(value)}
           captionLayout="dropdown"
           disabled={disabled}
+          month={field.state.value}
         />
       </PopoverContent>
     </Popover>
