@@ -3,6 +3,7 @@
 import { useState } from "react";
 
 import { useAppAlertDialog } from "@/hooks/use-dialog";
+import { cn } from "@/lib/utils";
 
 import {
   AlertDialog,
@@ -22,6 +23,7 @@ interface AppAlertDialogProps {
   title?: string;
   description?: string;
   onAction?: () => void | Promise<void>;
+  actionClassName?: string;
 }
 
 export default function AppAlertDialog({
@@ -30,6 +32,7 @@ export default function AppAlertDialog({
   title = "Apakah anda yakin?",
   description,
   onAction,
+  actionClassName,
 }: AppAlertDialogProps) {
   const alertDialog = useAppAlertDialog(id);
   const [loading, setLoading] = useState(false);
@@ -64,7 +67,10 @@ export default function AppAlertDialog({
             Cancel
           </AlertDialogCancel>
           <AlertDialogAction
-            className="bg-destructive hover:bg-destructive/80"
+            className={cn(
+              "bg-destructive hover:bg-destructive/80",
+              actionClassName
+            )}
             onClick={handleAction}
             disabled={loading}
           >
