@@ -6,7 +6,12 @@ import { toast } from "sonner";
 import { useAppForm } from "@/components/form";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
+import {
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from "@/components/ui/field";
 import {
   Select,
   SelectContent,
@@ -16,6 +21,7 @@ import {
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { useAppDialog } from "@/hooks/use-dialog";
+import { isFieldInvalid } from "@/lib/utils";
 import { dailyPermintaanMakananQuery } from "@/query/daily-permintaan-makanan";
 import { pasienQuery } from "@/query/pasien";
 import { DailyPermintaanMakananCreateSchema } from "@/schemas/daily-permintaan-makanan";
@@ -63,7 +69,7 @@ const PermintaanMakananForm = ({
           });
           toast.success("Permintaan makanan berhasil di-update");
         } else {
-          if (isPasienNotRegistered) {
+          if (isPasienNotRegistered || isPasienNotInSimrs) {
             if (!pasienForm.state.isValid) return;
             const pasienValue = PasienCreateSchema.parse(
               pasienForm.state.values
@@ -86,6 +92,7 @@ const PermintaanMakananForm = ({
   });
 
   const [isPasienNotRegistered, setIsPasienNotRegistered] = useState(false);
+  const [isPasienNotInSimrs, setIsPasienNotInSimrs] = useState(false);
   const pasienForm = useAppForm({
     defaultValues: {
       medicalRecordNumber: initialData?.pasien.medicalRecordNumber ?? "",
@@ -119,19 +126,40 @@ const PermintaanMakananForm = ({
   );
 
   const handleCheckMrn = async () => {
-    const mrn = pasienForm.getFieldValue("medicalRecordNumber");
-    const data = await orpc.pasien.findByMedicalRecordNumber.call({
-      medicalRecordNumber: mrn,
-    });
-    if (!data) {
-      setIsPasienNotRegistered(true);
-      return;
+    try {
+      setIsPasienNotRegistered(false);
+      setIsPasienNotInSimrs(false);
+      const mrn = pasienForm.getFieldValue("medicalRecordNumber");
+      const data = await orpc.pasien.findByMedicalRecordNumber.call({
+        medicalRecordNumber: mrn,
+      });
+      if (!data) {
+        const simrsData = await orpc.pasien.findFromSimrs.call({
+          medicalRecordNumber: mrn,
+        });
+        if (!simrsData) {
+          setIsPasienNotInSimrs(true);
+          pasienForm.resetField("name");
+          pasienForm.resetField("dateOfBirth");
+          toast.error("Pasien tidak ditemukan di SIMRS", {
+            description: "Silahkan masukkan No. MR yang benar",
+          });
+          return;
+        }
+
+        setIsPasienNotRegistered(true);
+        pasienForm.setFieldValue("name", simrsData.nama);
+        pasienForm.setFieldValue("dateOfBirth", new Date(simrsData.tgl_lahir));
+        return;
+      }
+      permintaanForm.setFieldValue("pasienId", data.id);
+      pasienForm.setFieldValue("name", data.name);
+      if (data.dateOfBirth) {
+        pasienForm.setFieldValue("dateOfBirth", data.dateOfBirth);
+      }
+    } catch (error) {
+      toast.error(String(error));
     }
-    setIsPasienNotRegistered(false);
-    permintaanForm.setFieldValue("pasienId", data.id);
-    pasienForm.setFieldValue("name", data.name);
-    data.dateOfBirth &&
-      pasienForm.setFieldValue("dateOfBirth", data.dateOfBirth);
   };
 
   return (
@@ -164,6 +192,9 @@ const PermintaanMakananForm = ({
                   Cek No. MR
                 </Button>
               </div>
+              {isFieldInvalid(field.state.meta) && (
+                <FieldError errors={field.state.meta.errors} />
+              )}
             </Field>
           )}
         </pasienForm.AppField>
@@ -171,9 +202,20 @@ const PermintaanMakananForm = ({
         {isPasienNotRegistered && (
           <Alert className="bg-secondary/10 text-orange-500">
             <CircleAlert />
-            <AlertTitle>Pasien belum terdaftar di SIGIZI</AlertTitle>
+            <AlertTitle>Alergi pasien belum diketahui</AlertTitle>
             <AlertDescription>
-              Silahkan isi data pasien terlebih dahulu
+              Silahkan isi data alergi terlebih dahulu (jika ada)
+            </AlertDescription>
+          </Alert>
+        )}
+
+        {isPasienNotInSimrs && (
+          <Alert className="bg-secondary/10 text-red-500">
+            <CircleAlert />
+            <AlertTitle>Pasien tidak ditemukan di SIMRS</AlertTitle>
+            <AlertDescription>
+              Data pasien tidak akan diisi secara otomatis. Pastikan Anda
+              mengisi data dengan benar.
             </AlertDescription>
           </Alert>
         )}
@@ -184,7 +226,10 @@ const PermintaanMakananForm = ({
               <Field className="w-2/3">
                 <FieldLabel>Nama pasien</FieldLabel>
                 <field.TextField
-                  disabled={!!initialData || !isPasienNotRegistered}
+                  disabled={
+                    !!initialData ||
+                    (!isPasienNotRegistered && !isPasienNotInSimrs)
+                  }
                 />
               </Field>
             )}
@@ -194,14 +239,17 @@ const PermintaanMakananForm = ({
               <Field className="w-1/3">
                 <FieldLabel>Tanggal lahir</FieldLabel>
                 <field.DateField
-                  disabled={!!initialData || !isPasienNotRegistered}
+                  disabled={
+                    !!initialData ||
+                    (!isPasienNotRegistered && !isPasienNotInSimrs)
+                  }
                 />
               </Field>
             )}
           </pasienForm.AppField>
         </div>
 
-        {isPasienNotRegistered && (
+        {(isPasienNotRegistered || isPasienNotInSimrs) && (
           <pasienForm.AppField name="alergiIds">
             {(field) => (
               <Field>
