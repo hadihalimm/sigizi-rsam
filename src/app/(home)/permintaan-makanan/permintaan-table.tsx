@@ -196,7 +196,7 @@ const PermintaanMakananTable = () => {
           </SelectTrigger>
         </Select>
       </div>
-      {data.length === 0 && (
+      {data.length === 0 && currentBangsal === "all" && (
         <AppAlertDialog
           id="copyPermintaan"
           title="Copy permintaan makanan kemarin"
