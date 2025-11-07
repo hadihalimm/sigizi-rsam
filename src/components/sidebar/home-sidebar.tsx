@@ -1,6 +1,6 @@
 import { Sidebar, SidebarContent, SidebarHeader } from "../ui/sidebar";
 import NavGroup from "./nav-group";
-import { appGroup } from "./sidebar-items";
+import { adminGroup, appGroup } from "./sidebar-items";
 
 export default function HomeSidebar({
   ...props
@@ -8,11 +8,15 @@ export default function HomeSidebar({
   return (
     <Sidebar variant="inset" {...props}>
       <SidebarHeader className="flex justify-center items-center">
-        <h1>SIGIZI RSAM</h1>
+        <div className="bg-primary/20 p-2 rounded-md">
+          <h1 className="text-2xl text-primary font-bold">SIGIZI</h1>
+        </div>
+        <p className="text-sm text-muted-foreground">RSUD Dr. Achmad Mochtar</p>
       </SidebarHeader>
 
       <SidebarContent>
         <NavGroup groupLabel="Aplikasi" items={appGroup} />
+        <NavGroup groupLabel="Admin" items={adminGroup} />
       </SidebarContent>
     </Sidebar>
   );

@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -34,9 +33,13 @@ export default function NavGroup({
         <SidebarMenu>
           {items.map((item) => (
             <SidebarMenuItem key={item.title}>
-              <SidebarMenuButton asChild isActive={pathname === item.url}>
+              <SidebarMenuButton
+                asChild
+                isActive={pathname === item.url}
+                className="text-[15px] text-foreground/90 h-10"
+              >
                 <Link href={item.url}>
-                  {item.icon && <Image src={item.icon} alt={item.title} />}
+                  <div>{item.icon}</div>
                   <span>{item.title}</span>
                 </Link>
               </SidebarMenuButton>
