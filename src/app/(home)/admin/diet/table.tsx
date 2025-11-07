@@ -11,7 +11,9 @@ import {
 } from "@tanstack/react-table";
 import { Plus } from "lucide-react";
 import { Suspense, useState } from "react";
+import { toast } from "sonner";
 
+import AppAlertDialog from "@/components/app-alert-dialog";
 import AppDialog from "@/components/app-dialog";
 import { DropdownRowAction } from "@/components/dropdown-row-action";
 import TablePagination from "@/components/table-pagination";
@@ -98,7 +100,7 @@ const DietTable = () => {
     },
   });
 
-  const deleteMakanan = dietQuery.useDelete();
+  const deleteDiet = dietQuery.useDelete();
 
   return (
     <div className="flex flex-col gap-4">
@@ -207,6 +209,19 @@ const DietTable = () => {
           <DietForm initialData={selectedItem} />
         </Suspense>
       </AppDialog>
+
+      <AppAlertDialog
+        id="deleteDiet"
+        title="Apakah anda yakin?"
+        description="Operasi ini akan menghapus data secara permanen."
+        onAction={async () => {
+          if (!selectedItem) return;
+          await deleteDiet.mutateAsync({
+            id: selectedItem.id,
+          });
+          toast.info("Diet berhasil dihapus.");
+        }}
+      />
     </div>
   );
 };
