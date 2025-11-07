@@ -18,6 +18,20 @@ const PermintaanMakananPage = () => {
       },
     })
   );
+  void queryClient.prefetchQuery(
+    orpc.dailyPermintaanMakananLog.getAll.queryOptions({
+      input: {
+        date: todayDate!.toLocaleDateString("en-CA"),
+      },
+    })
+  );
+  void queryClient.prefetchQuery(orpc.makananType.getAll.queryOptions());
+  void queryClient.prefetchQuery(orpc.bangsal.getAll.queryOptions());
+  void queryClient.prefetchQuery(
+    orpc.ruangan.getAll.queryOptions({ input: {} })
+  );
+  void queryClient.prefetchQuery(orpc.diet.getAll.queryOptions());
+  void queryClient.prefetchQuery(orpc.treatmentClass.getAll.queryOptions());
   return (
     <main className="flex flex-col gap-12">
       <h1 className="font-semibold text-2xl">Daftar Permintaan Makanan</h1>
