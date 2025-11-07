@@ -114,7 +114,7 @@ const PermintaanMakananForm = ({
   );
   const { data: ruanganList } = useSuspenseQuery(
     orpc.ruangan.getAll.queryOptions({
-      input: { bangsalId: Number(bangsalId) },
+      input: {},
     })
   );
   const { data: makananTypeList } = useSuspenseQuery(
@@ -295,10 +295,12 @@ const PermintaanMakananForm = ({
                 <FieldLabel>Ruangan</FieldLabel>
                 <field.SelectField
                   valueType="number"
-                  options={ruanganList.map((ruangan) => ({
-                    label: ruangan.name,
-                    value: ruangan.id.toString(),
-                  }))}
+                  options={ruanganList
+                    .filter((ruangan) => ruangan.bangsalId === bangsalId)
+                    .map((ruangan) => ({
+                      label: ruangan.name,
+                      value: ruangan.id.toString(),
+                    }))}
                   placeholder="Pilih ruangan..."
                 />
               </Field>
