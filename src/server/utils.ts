@@ -1,9 +1,9 @@
 import { ORPCError } from "@orpc/client";
-import { DrizzleError } from "drizzle-orm";
+import { DrizzleQueryError } from "drizzle-orm";
 import { DatabaseError } from "pg";
 
 export function handleORPCError(error: unknown): never {
-  if (error instanceof DrizzleError) {
+  if (error instanceof DrizzleQueryError) {
     throw new ORPCError("INTERNAL_SERVER_ERROR", {
       message: "Drizzle error",
       data: error,
