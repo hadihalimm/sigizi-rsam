@@ -1,5 +1,5 @@
 import { os } from "@orpc/server";
-import { eq } from "drizzle-orm";
+import { asc, eq } from "drizzle-orm";
 import z from "zod";
 
 import db from "@/db";
@@ -64,6 +64,7 @@ export const ruanganProcedure = {
 
         return updatedRuangan;
       } catch (error) {
+        console.log(error);
         handleORPCError(error);
       }
     }),
@@ -77,7 +78,6 @@ export const ruanganProcedure = {
           .delete(ruangan)
           .where(eq(ruangan.id, input.id))
           .returning();
-
         return deletedRuangan;
       } catch (error) {
         handleORPCError(error);
@@ -95,6 +95,37 @@ export const bangsalProcedure = {
       handleORPCError(error);
     }
   }),
+
+  getAllWithRuangan: os
+    .route({ path: "/", method: "GET" })
+    .handler(async () => {
+      try {
+        const rows = await db
+          .select()
+          .from(bangsal)
+          .leftJoin(ruangan, eq(bangsal.id, ruangan.bangsalId))
+          .leftJoin(
+            treatmentClass,
+            eq(ruangan.treatmentClassId, treatmentClass.id)
+          )
+          .orderBy(asc(bangsal.id));
+
+        // const result = Array.from(
+        //   Map.groupBy(rows, (row) => row.bangsal.id),
+        //   ([, group]) => ({
+        //     bangsal: group[0].bangsal,
+        //     ruanganList: group.map((row) => ({
+        //       ...row.ruangan,
+        //       treatmentClass: row.treatment_class,
+        //     })),
+        //   })
+        // );
+
+        return rows;
+      } catch (error) {
+        handleORPCError(error);
+      }
+    }),
 
   create: os
     .route({ path: "/", method: "POST" })

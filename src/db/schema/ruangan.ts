@@ -4,7 +4,7 @@ export const bangsal = pgTable("bangsal", {
   id: serial("id").primaryKey(),
   code: text("code").notNull().unique(),
   name: text("name").notNull(),
-  simrsCode: text("simrs_code").notNull(),
+  simrsCode: text("simrs_code"),
 });
 
 export const ruangan = pgTable("ruangan", {
@@ -17,7 +17,7 @@ export const ruangan = pgTable("ruangan", {
   bangsalId: integer("bangsal_id")
     .notNull()
     .references(() => bangsal.id, { onDelete: "cascade" }),
-  simrsCode: text("simrs_code").notNull(),
+  simrsCode: text("simrs_code"),
 });
 
 export const treatmentClass = pgTable("treatment_class", {
