@@ -1,9 +1,10 @@
 import {
-  BeanOff,
+  Bean,
+  Bed,
   BookUser,
   Carrot,
   ClipboardList,
-  FishOff,
+  Fish,
   Hamburger,
   HandPlatter,
   LayoutDashboard,
@@ -58,11 +59,16 @@ export const adminGroup: groupProps[] = [
   {
     title: "Daftar Diet",
     url: "/admin/diet",
-    icon: <FishOff className="size-5" />,
+    icon: <Fish className="size-5" />,
   },
   {
     title: "Daftar Alergi",
     url: "/admin/alergi",
-    icon: <BeanOff className="size-5" />,
+    icon: <Bean className="size-5" />,
+  },
+  {
+    title: "Daftar Ruangan",
+    url: "/admin/ruangan",
+    icon: <Bed className="size-5" />,
   },
 ];
