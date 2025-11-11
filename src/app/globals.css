@@ -118,7 +118,7 @@
 
 :root {
   --radius: 0.625rem;
-  --background: oklch(0.9945 0.0031 88.97);
+  --background: oklch(0.989 0.0063 88.99);
   --foreground: oklch(0.145 0 0);
   --card: oklch(0.99 0.001 135);
   --card-foreground: oklch(0.145 0 0);
@@ -142,7 +142,7 @@
   --chart-3: oklch(0.6968 0.1509 136.06);
   --chart-4: oklch(0.5816 0.1241 136.14);
   --chart-5: oklch(0.4576 0.0941 136.11);
-  --sidebar: oklch(0.989 0.0062 88.99);
+  --sidebar: oklch(0.9836 0.0094 89.01);
   --sidebar-foreground: oklch(0.145 0 0);
   --sidebar-primary: oklch(0.7 0.1 135);
   --sidebar-primary-foreground: oklch(0.985 0 0);
