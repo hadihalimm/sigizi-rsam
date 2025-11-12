@@ -35,7 +35,11 @@ export default function NavGroup({
             <SidebarMenuItem key={item.title}>
               <SidebarMenuButton
                 asChild
-                isActive={pathname === item.url}
+                isActive={
+                  item.url === "/"
+                    ? pathname === "/"
+                    : pathname.startsWith(item.url)
+                }
                 className="text-[15px] text-foreground/90 h-10"
               >
                 <Link href={item.url}>
