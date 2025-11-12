@@ -33,6 +33,7 @@ export const dailyPermintaanMakanan = pgTable(
       .references(() => makananType.id, { onDelete: "no action" }),
     note: text("note"),
     isTerlambat: boolean("is_terlambat").notNull(),
+    pendampingCount: integer("pendamping_count").notNull(),
     createdAt: timestamp("created_at", { withTimezone: true })
       .defaultNow()
       .notNull(),

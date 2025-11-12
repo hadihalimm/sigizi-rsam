@@ -12,4 +12,5 @@ export const DailyPermintaanMakananCreateSchema = z.object({
     z.number().positive({ message: "Diet ID tidak boleh kosong" })
   ),
   note: z.string(),
+  pendampingCount: z.number().nonnegative(),
 });

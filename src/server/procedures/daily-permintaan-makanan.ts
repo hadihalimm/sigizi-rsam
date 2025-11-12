@@ -81,6 +81,7 @@ export const dailyPermintaanMakananProcedure = {
               makananTypeId: input.makananTypeId,
               note: input.note,
               isTerlambat: input.isTerlambat,
+              pendampingCount: input.pendampingCount,
             })
             .returning();
 
@@ -142,6 +143,7 @@ export const dailyPermintaanMakananProcedure = {
               makananTypeId: input.body.makananTypeId,
               note: input.body.note,
               isTerlambat: input.body.isTerlambat,
+              pendampingCount: input.body.pendampingCount,
             })
             .where(eq(dailyPermintaanMakanan.id, input.params.id));
 
@@ -304,6 +306,7 @@ export const dailyPermintaanMakananProcedure = {
                 makananTypeId: item.dailyPermintaanMakanan.makananTypeId,
                 isTerlambat: false,
                 note: item.dailyPermintaanMakanan.note,
+                pendampingCount: item.dailyPermintaanMakanan.pendampingCount,
               }))
             )
             .returning({ id: dailyPermintaanMakanan.id });
@@ -426,3 +429,13 @@ function generatePermintaanLog(
   if (Object.keys(changes.old).length === 0) return null;
   return changes;
 }
+
+export const dailyPermintaanMakananPendampingProcedure = {
+  getAll: os
+    .route({ path: "/", method: "GET" })
+    .input(z.object({ date: z.string() }))
+    .handler(async ({ input }) => {
+      try {
+      } catch (error) {}
+    }),
+};

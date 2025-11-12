@@ -56,6 +56,8 @@ const PermintaanMakananForm = ({
         [],
       note: initialData?.dailyPermintaanMakanan.note ?? "",
       isTerlambat: initialData?.dailyPermintaanMakanan.isTerlambat ?? false,
+      pendampingCount:
+        initialData?.dailyPermintaanMakanan.pendampingCount ?? "",
     },
     validators: {
       onChange: DailyPermintaanMakananCreateSchema,
@@ -93,6 +95,7 @@ const PermintaanMakananForm = ({
 
   const [isPasienNotRegistered, setIsPasienNotRegistered] = useState(false);
   const [isPasienNotInSimrs, setIsPasienNotInSimrs] = useState(false);
+  const [isPasienVip, setIsPasienVip] = useState(false);
   const pasienForm = useAppForm({
     defaultValues: {
       medicalRecordNumber: initialData?.pasien.medicalRecordNumber ?? "",
@@ -116,6 +119,9 @@ const PermintaanMakananForm = ({
     orpc.ruangan.getAll.queryOptions({
       input: {},
     })
+  );
+  const { data: treatmentClassList } = useSuspenseQuery(
+    orpc.treatmentClass.getAll.queryOptions()
   );
   const { data: makananTypeList } = useSuspenseQuery(
     orpc.makananType.getAll.queryOptions()
@@ -274,6 +280,7 @@ const PermintaanMakananForm = ({
               value={bangsalId.toString()}
               onValueChange={(value) => {
                 setBangsalId(Number(value));
+                setIsPasienVip(false);
                 permintaanForm.setFieldValue("ruanganId", "");
               }}
             >
@@ -302,11 +309,33 @@ const PermintaanMakananForm = ({
                       value: ruangan.id.toString(),
                     }))}
                   placeholder="Pilih ruangan..."
+                  onValueChange={(value) => {
+                    const ruangan = ruanganList.find(
+                      (ruangan) => ruangan.id === Number(value)
+                    );
+                    const treatmentClass = treatmentClassList.find(
+                      (tc) => tc.id === ruangan?.treatmentClassId
+                    );
+                    if (treatmentClass?.code.toLowerCase().includes("vip")) {
+                      setIsPasienVip(true);
+                    }
+                  }}
                 />
               </Field>
             )}
           </permintaanForm.AppField>
         </div>
+
+        {isPasienVip && (
+          <permintaanForm.AppField name="pendampingCount">
+            {(field) => (
+              <Field>
+                <FieldLabel>Jumlah pendamping</FieldLabel>
+                <field.TextField valueType="number" />
+              </Field>
+            )}
+          </permintaanForm.AppField>
+        )}
 
         <permintaanForm.AppField name="makananTypeId">
           {(field) => (
