@@ -9,7 +9,6 @@ import {
   text,
   timestamp,
   unique,
-  uniqueIndex,
 } from "drizzle-orm/pg-core";
 
 import { diet } from "./diet";
@@ -44,7 +43,7 @@ export const dailyPermintaanMakanan = pgTable(
   },
   (table) => [
     index("permintaan_date_idx").on(table.day),
-    uniqueIndex("permintaan_date_pasien_id_idx").on(table.day, table.pasienId),
+    unique("unique_permintaan_date_pasien_id").on(table.day, table.pasienId),
   ]
 );
 
@@ -59,7 +58,12 @@ export const dailyPermintaanMakananDiet = pgTable(
       .notNull()
       .references(() => diet.id, { onDelete: "no action" }),
   },
-  (t) => [unique().on(t.dailyPermintaanMakananId, t.dietId)]
+  (t) => [
+    unique("unique_daily_permintaan_diet").on(
+      t.dailyPermintaanMakananId,
+      t.dietId
+    ),
+  ]
 );
 
 export const dailyPermintaanMakananLog = pgTable(
