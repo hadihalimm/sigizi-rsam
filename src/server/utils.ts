@@ -20,3 +20,9 @@ export function handleORPCError(error: unknown): never {
     });
   }
 }
+
+export function calculateMenuOrder(day: number) {
+  if (day === 31) return 5;
+  const order = day % 10;
+  return order === 0 ? 10 : order;
+}

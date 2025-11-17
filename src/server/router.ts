@@ -1,6 +1,10 @@
 import { alergiProcedure } from "./procedures/alergi";
 import { bahanMakananProcedure } from "./procedures/bahan-makanan";
 import {
+  dailyMenuDetailProcedure,
+  dailyMenuProcedure,
+} from "./procedures/daily-menu";
+import {
   dailyPermintaanMakananLogProcedure,
   dailyPermintaanMakananProcedure,
 } from "./procedures/daily-permintaan-makanan";
@@ -30,4 +34,6 @@ export const router = {
   treatmentClass: treatmentClassProcedure,
   dailyPermintaanMakanan: dailyPermintaanMakananProcedure,
   dailyPermintaanMakananLog: dailyPermintaanMakananLogProcedure,
+  dailyMenu: dailyMenuProcedure,
+  dailyMenuDetail: dailyMenuDetailProcedure,
 };
