@@ -139,7 +139,7 @@ export function MultiSelectField({
         disabled={disabled}
         className={cn("w-full", className)}
       >
-        <MultiSelectValue placeholder={placeholder} />
+        <MultiSelectValue placeholder={placeholder} overflowBehavior="wrap" />
       </MultiSelectTrigger>
       <MultiSelectContent>
         <MultiSelectGroup>
