@@ -10,6 +10,7 @@ interface SubscribeButtonProps {
   label: string;
   variant?: VariantProps<typeof buttonVariants>["variant"];
   size?: VariantProps<typeof buttonVariants>["size"];
+  children?: React.ReactNode;
   className?: string;
 }
 
@@ -17,6 +18,7 @@ export default function SubscribeButton({
   label,
   variant,
   size,
+  children,
   className,
 }: SubscribeButtonProps) {
   const form = useFormContext();
@@ -29,7 +31,7 @@ export default function SubscribeButton({
           disabled={isSubmitting}
           className={cn("", className)}
         >
-          {isSubmitting ?? <Spinner />}
+          {isSubmitting ? <Spinner /> : children}
           {label}
         </Button>
       )}
