@@ -8,7 +8,14 @@ interface DateState {
 }
 
 export const useDateStore = create<DateState>((set) => ({
-  dates: {},
+  dates: {
+    permintaanDate: new Date(),
+    pemesananDate: (() => {
+      const d = new Date();
+      d.setDate(d.getDate() + 1);
+      return d;
+    })(),
+  },
   setDate: (key, date) =>
     set((state) => ({
       dates: { ...state.dates, [key]: date },

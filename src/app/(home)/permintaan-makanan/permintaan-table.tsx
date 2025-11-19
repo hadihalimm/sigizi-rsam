@@ -46,7 +46,6 @@ import PermintaanMakananForm from "./permintaan-form";
 
 const PermintaanMakananTable = () => {
   const { dates, setDate } = useDateStore();
-  setDate("permintaanDate", new Date());
   const permintaanDate = dates["permintaanDate"];
 
   const [currentBangsal, setCurrentBangsal] = useState<string>("all");
@@ -179,7 +178,7 @@ const PermintaanMakananTable = () => {
       <div className="flex gap-2 lg:w-1/2">
         <DatePicker
           value={permintaanDate}
-          onValueChange={(value) => setDate("permintaan-date", value!)}
+          onValueChange={(value) => setDate("permintaanDate", value!)}
           className="w-1/2"
         />
         <Select

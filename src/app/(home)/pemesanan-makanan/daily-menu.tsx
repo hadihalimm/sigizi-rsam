@@ -1,26 +1,23 @@
 "use client";
 
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { useState } from "react";
 
 import DatePicker from "@/components/ui/date-picker";
 import { Field, FieldLabel } from "@/components/ui/field";
 import { ItemGroup } from "@/components/ui/item";
 import { orpc } from "@/server/orpc";
+import { useDateStore } from "@/stores/use-date-store";
 
 import DailyMenuItem from "./daily-menu-item";
 import SelectMenuBookForm from "./select-menu-book-form";
 
 const DailyMenu = () => {
-  const [todayDate, setTodayDate] = useState(() => {
-    const date = new Date();
-    date.setDate(date.getDate() + 1);
-    return date;
-  });
+  const { dates, setDate } = useDateStore();
+  const pemesananDate = dates["pemesananDate"];
 
   const { data: dailyMenuList } = useSuspenseQuery(
     orpc.dailyMenu.getAll.queryOptions({
-      input: { date: todayDate.toLocaleDateString("en-CA") },
+      input: { date: pemesananDate.toLocaleDateString("en-CA") },
     })
   );
 
@@ -30,13 +27,15 @@ const DailyMenu = () => {
         <Field>
           <FieldLabel>Tanggal</FieldLabel>
           <DatePicker
-            value={todayDate}
-            onValueChange={(value) => setTodayDate(value!)}
+            value={pemesananDate}
+            onValueChange={(value) => setDate("pemesananDate", value!)}
           />
         </Field>
       </div>
 
-      {dailyMenuList.length === 0 && <SelectMenuBookForm date={todayDate} />}
+      {dailyMenuList.length === 0 && (
+        <SelectMenuBookForm date={dates["pemesananDate"]} />
+      )}
 
       <ItemGroup className="flex lg:flex-row gap-4">
         {dailyMenuList.map((item) => (
