@@ -53,7 +53,7 @@ export const adminGroup: groupProps[] = [
   },
   {
     title: "Daftar Bahan Makanan",
-    url: "/admin/bahan-makanan  ",
+    url: "/admin/bahan-makanan",
     icon: <Carrot className="size-5" />,
   },
   {
