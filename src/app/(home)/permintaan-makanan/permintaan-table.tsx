@@ -45,7 +45,10 @@ import { useDateStore } from "@/stores/use-date-store";
 import PermintaanMakananForm from "./permintaan-form";
 
 const PermintaanMakananTable = () => {
-  const { todayDate, setTodayDate } = useDateStore();
+  const { dates, setDate } = useDateStore();
+  setDate("permintaanDate", new Date());
+  const permintaanDate = dates["permintaanDate"];
+
   const [currentBangsal, setCurrentBangsal] = useState<string>("all");
   const { data: bangsalList } = useSuspenseQuery(
     orpc.bangsal.getAll.queryOptions()
@@ -53,7 +56,7 @@ const PermintaanMakananTable = () => {
   const { data } = useSuspenseQuery(
     orpc.dailyPermintaanMakanan.getAll.queryOptions({
       input: {
-        date: todayDate!.toLocaleDateString("en-CA"),
+        date: permintaanDate.toLocaleDateString("en-CA"),
         bangsalId:
           currentBangsal !== "all" ? Number(currentBangsal) : undefined,
       },
@@ -175,8 +178,8 @@ const PermintaanMakananTable = () => {
     <div className="flex flex-col gap-4">
       <div className="flex gap-2 lg:w-1/2">
         <DatePicker
-          value={todayDate}
-          onValueChange={(value) => setTodayDate(value!)}
+          value={permintaanDate}
+          onValueChange={(value) => setDate("permintaan-date", value!)}
           className="w-1/2"
         />
         <Select
@@ -205,7 +208,7 @@ const PermintaanMakananTable = () => {
           actionClassName="bg-primary hover:bg-primary/90"
           onAction={async () => {
             await copyFromYesterday.mutateAsync({
-              date: todayDate.toLocaleDateString("en-CA"),
+              date: permintaanDate.toLocaleDateString("en-CA"),
             });
           }}
         />
@@ -305,7 +308,7 @@ const PermintaanMakananTable = () => {
             <Spinner className="size-10 flex w-full justify-center items-center" />
           }
         >
-          <PermintaanMakananForm todayDate={todayDate} />
+          <PermintaanMakananForm todayDate={permintaanDate} />
         </Suspense>
       </AppDialog>
 
@@ -317,7 +320,7 @@ const PermintaanMakananTable = () => {
         >
           <PermintaanMakananForm
             initialData={selectedItem}
-            todayDate={todayDate}
+            todayDate={permintaanDate}
           />
         </Suspense>
       </AppDialog>

@@ -14,11 +14,12 @@ import { orpc } from "@/server/orpc";
 import { useDateStore } from "@/stores/use-date-store";
 
 const DietRekap = () => {
-  const { todayDate } = useDateStore();
+  const { dates } = useDateStore();
+  const permintaanDate = dates["permintaanDate"];
   const { data } = useSuspenseQuery(
     orpc.dailyPermintaanMakanan.getAll.queryOptions({
       input: {
-        date: todayDate!.toLocaleDateString("en-CA"),
+        date: permintaanDate.toLocaleDateString("en-CA"),
       },
     })
   );

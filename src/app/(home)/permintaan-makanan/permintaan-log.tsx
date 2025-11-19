@@ -9,11 +9,12 @@ import { orpc } from "@/server/orpc";
 import { useDateStore } from "@/stores/use-date-store";
 
 const PermintaanMakananLog = ({ className }: { className?: string }) => {
-  const { todayDate } = useDateStore();
+  const { dates } = useDateStore();
+  const permintaanDate = dates["permintaanDate"];
   const { data: logs } = useSuspenseQuery(
     orpc.dailyPermintaanMakananLog.getAll.queryOptions({
       input: {
-        date: todayDate!.toLocaleDateString("en-CA"),
+        date: permintaanDate.toLocaleDateString("en-CA"),
       },
     })
   );
