@@ -1,5 +1,6 @@
 export * from "./alergi";
 export * from "./bahan-makanan";
+export * from "./daily-bahan-makanan";
 export * from "./daily-menu";
 export * from "./daily-permintaan-makanan";
 export * from "./diet";
