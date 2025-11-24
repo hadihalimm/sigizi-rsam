@@ -27,17 +27,16 @@ import { pasienQuery } from "@/query/pasien";
 import { DailyPermintaanMakananCreateSchema } from "@/schemas/daily-permintaan-makanan";
 import { PasienCreateSchema } from "@/schemas/pasien";
 import { orpc } from "@/server/orpc";
+import { useDateStore } from "@/stores/use-date-store";
 import { DailyPermintaanMakananDetail } from "@/types/db";
 
 interface PermintaanMakananFormProps {
   initialData?: DailyPermintaanMakananDetail;
-  todayDate: Date;
 }
 
-const PermintaanMakananForm = ({
-  initialData,
-  todayDate,
-}: PermintaanMakananFormProps) => {
+const PermintaanMakananForm = ({ initialData }: PermintaanMakananFormProps) => {
+  const { dates } = useDateStore();
+  const permintaanDate = dates["permintaanDate"];
   const dialog = useAppDialog(
     initialData ? "updatePermintaanMakanan" : "createPermintaanMakanan"
   );
@@ -47,7 +46,9 @@ const PermintaanMakananForm = ({
 
   const permintaanForm = useAppForm({
     defaultValues: {
-      day: initialData?.dailyPermintaanMakanan.day ?? todayDate,
+      day:
+        initialData?.dailyPermintaanMakanan.day.toLocaleDateString("en-CA") ??
+        permintaanDate.toLocaleDateString("en-CA"),
       pasienId: initialData?.pasien.id ?? 0,
       ruanganId: initialData?.ruangan.id ?? "",
       makananTypeId: initialData?.makananType.id ?? "",
@@ -56,8 +57,7 @@ const PermintaanMakananForm = ({
         [],
       note: initialData?.dailyPermintaanMakanan.note ?? "",
       isTerlambat: initialData?.dailyPermintaanMakanan.isTerlambat ?? false,
-      pendampingCount:
-        initialData?.dailyPermintaanMakanan.pendampingCount ?? "",
+      pendampingCount: initialData?.dailyPermintaanMakanan.pendampingCount ?? 0,
     },
     validators: {
       onChange: DailyPermintaanMakananCreateSchema,

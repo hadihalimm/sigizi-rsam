@@ -307,7 +307,7 @@ const PermintaanMakananTable = () => {
             <Spinner className="size-10 flex w-full justify-center items-center" />
           }
         >
-          <PermintaanMakananForm todayDate={permintaanDate} />
+          <PermintaanMakananForm />
         </Suspense>
       </AppDialog>
 
@@ -317,10 +317,7 @@ const PermintaanMakananTable = () => {
             <Spinner className="size-10 flex w-full justify-center items-center" />
           }
         >
-          <PermintaanMakananForm
-            initialData={selectedItem}
-            todayDate={permintaanDate}
-          />
+          <PermintaanMakananForm initialData={selectedItem} />
         </Suspense>
       </AppDialog>
       <AppAlertDialog
