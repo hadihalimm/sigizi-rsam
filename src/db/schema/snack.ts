@@ -2,9 +2,9 @@ import {
   doublePrecision,
   integer,
   pgTable,
+  primaryKey,
   serial,
   text,
-  unique,
 } from "drizzle-orm/pg-core";
 
 import { bahanMakanan } from "./bahan-makanan";
@@ -19,7 +19,6 @@ export const snack = pgTable("snack", {
 export const snackMakananType = pgTable(
   "snack_makanan_type",
   {
-    id: serial("id").primaryKey(),
     snackId: integer("snack_id")
       .notNull()
       .references(() => snack.id, { onDelete: "cascade" }),
@@ -27,13 +26,12 @@ export const snackMakananType = pgTable(
       .notNull()
       .references(() => makananType.id, { onDelete: "no action" }),
   },
-  (t) => [unique().on(t.snackId, t.makananTypeId)]
+  (t) => [primaryKey({ columns: [t.snackId, t.makananTypeId] })]
 );
 
 export const snackDiet = pgTable(
   "snack_diet",
   {
-    id: serial("id").primaryKey(),
     snackId: integer("snack_id")
       .notNull()
       .references(() => snack.id, { onDelete: "cascade" }),
@@ -41,13 +39,12 @@ export const snackDiet = pgTable(
       .notNull()
       .references(() => diet.id, { onDelete: "no action" }),
   },
-  (t) => [unique().on(t.snackId, t.dietId)]
+  (t) => [primaryKey({ columns: [t.snackId, t.dietId] })]
 );
 
 export const snackResepDetail = pgTable(
   "snack_resep_detail",
   {
-    id: serial("id").primaryKey(),
     snackId: integer("snack_id")
       .notNull()
       .references(() => snack.id, { onDelete: "cascade" }),
@@ -56,5 +53,5 @@ export const snackResepDetail = pgTable(
       .references(() => bahanMakanan.id, { onDelete: "cascade" }),
     quantity: doublePrecision("quantity").notNull(),
   },
-  (t) => [unique().on(t.snackId, t.bahanMakananId)]
+  (t) => [primaryKey({ columns: [t.snackId, t.bahanMakananId] })]
 );

@@ -5,6 +5,7 @@ import {
   integer,
   jsonb,
   pgTable,
+  primaryKey,
   serial,
   text,
   timestamp,
@@ -50,7 +51,6 @@ export const dailyPermintaanMakanan = pgTable(
 export const dailyPermintaanMakananDiet = pgTable(
   "daily_permintaan_makanan_diet",
   {
-    id: serial("id").primaryKey(),
     dailyPermintaanMakananId: integer("daily_permintaan_makanan_id")
       .notNull()
       .references(() => dailyPermintaanMakanan.id, { onDelete: "cascade" }),
@@ -58,12 +58,7 @@ export const dailyPermintaanMakananDiet = pgTable(
       .notNull()
       .references(() => diet.id, { onDelete: "no action" }),
   },
-  (t) => [
-    unique("unique_daily_permintaan_diet").on(
-      t.dailyPermintaanMakananId,
-      t.dietId
-    ),
-  ]
+  (t) => [primaryKey({ columns: [t.dailyPermintaanMakananId, t.dietId] })]
 );
 
 export const dailyPermintaanMakananLog = pgTable(

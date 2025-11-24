@@ -1,4 +1,4 @@
-import { integer, pgTable, serial } from "drizzle-orm/pg-core";
+import { integer, numeric, pgTable, serial } from "drizzle-orm/pg-core";
 
 import { bahanMakanan } from "./bahan-makanan";
 
@@ -7,5 +7,5 @@ export const stockBahanMakanan = pgTable("stock_bahan_makanan", {
   bahanMakananId: integer()
     .notNull()
     .references(() => bahanMakanan.id, { onDelete: "cascade" }),
-  stock: integer().notNull(),
+  stock: numeric({ mode: "number" }).notNull(),
 });

@@ -1,5 +1,5 @@
 import { os } from "@orpc/server";
-import { and, eq, gt, ilike, inArray, notInArray, or } from "drizzle-orm";
+import { and, eq, gt, ilike, inArray, or } from "drizzle-orm";
 import z from "zod";
 
 import db from "@/db";
@@ -130,20 +130,9 @@ export const pasienProcedure = {
             .where(eq(pasien.id, input.params.id))
             .returning();
 
-          if (input.body.alergiIds.length === 0) {
-            await tx
-              .delete(pasienAlergi)
-              .where(eq(pasienAlergi.pasienId, input.params.id));
-          } else {
-            await tx
-              .delete(pasienAlergi)
-              .where(
-                and(
-                  eq(pasienAlergi.pasienId, input.params.id),
-                  notInArray(pasienAlergi.alergiId, input.body.alergiIds)
-                )
-              );
-          }
+          await tx
+            .delete(pasienAlergi)
+            .where(eq(pasienAlergi.pasienId, input.params.id));
 
           const pasienAlergiInput = input.body.alergiIds.map((id) => ({
             pasienId: input.params.id,

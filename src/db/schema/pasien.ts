@@ -3,9 +3,9 @@ import {
   index,
   integer,
   pgTable,
+  primaryKey,
   serial,
   text,
-  unique,
 } from "drizzle-orm/pg-core";
 
 import { alergi } from "./alergi";
@@ -24,7 +24,6 @@ export const pasien = pgTable(
 export const pasienAlergi = pgTable(
   "pasien_alergi",
   {
-    id: serial("id").primaryKey(),
     pasienId: integer("pasien_id")
       .notNull()
       .references(() => pasien.id, { onDelete: "cascade" }),
@@ -32,5 +31,5 @@ export const pasienAlergi = pgTable(
       .notNull()
       .references(() => alergi.id, { onDelete: "no action" }),
   },
-  (t) => [unique().on(t.pasienId, t.alergiId)]
+  (t) => [primaryKey({ columns: [t.pasienId, t.alergiId] })]
 );

@@ -1,5 +1,5 @@
 import { os } from "@orpc/server";
-import { and, eq, notInArray } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import z from "zod";
 
 import db from "@/db";
@@ -161,45 +161,17 @@ export const dailyMenuDetailProcedure = {
     )
     .handler(async ({ input }) => {
       return await db.transaction(async (tx) => {
-        if (input.body.makananIds.length === 0) {
-          await tx
-            .delete(dailyMenuMakananDetail)
-            .where(
-              eq(dailyMenuMakananDetail.dailyMenuId, input.params.dailyMenuId)
-            );
-        } else {
-          await tx
-            .delete(dailyMenuMakananDetail)
-            .where(
-              and(
-                eq(
-                  dailyMenuMakananDetail.dailyMenuId,
-                  input.params.dailyMenuId
-                ),
-                notInArray(
-                  dailyMenuMakananDetail.makananId,
-                  input.body.makananIds
-                )
-              )
-            );
-        }
+        await tx
+          .delete(dailyMenuMakananDetail)
+          .where(
+            eq(dailyMenuMakananDetail.dailyMenuId, input.params.dailyMenuId)
+          );
 
-        if (input.body.snackIds.length === 0) {
-          await tx
-            .delete(dailyMenuSnackDetail)
-            .where(
-              eq(dailyMenuSnackDetail.dailyMenuId, input.params.dailyMenuId)
-            );
-        } else {
-          await tx
-            .delete(dailyMenuSnackDetail)
-            .where(
-              and(
-                eq(dailyMenuSnackDetail.dailyMenuId, input.params.dailyMenuId),
-                notInArray(dailyMenuSnackDetail.snackId, input.body.snackIds)
-              )
-            );
-        }
+        await tx
+          .delete(dailyMenuSnackDetail)
+          .where(
+            eq(dailyMenuSnackDetail.dailyMenuId, input.params.dailyMenuId)
+          );
 
         const makananIdInput = input.body.makananIds.map((id) => ({
           makananId: id,

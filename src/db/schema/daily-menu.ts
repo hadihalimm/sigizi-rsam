@@ -2,9 +2,9 @@ import {
   date,
   integer,
   pgTable,
+  primaryKey,
   serial,
   timestamp,
-  unique,
 } from "drizzle-orm/pg-core";
 
 import { makanan } from "./makanan";
@@ -29,7 +29,6 @@ export const dailyMenu = pgTable("daily_menu", {
 export const dailyMenuMakananDetail = pgTable(
   "daily_menu_makanan_detail",
   {
-    id: serial("id").primaryKey(),
     dailyMenuId: integer("daily_menu_id")
       .notNull()
       .references(() => dailyMenu.id, { onDelete: "cascade" }),
@@ -37,15 +36,12 @@ export const dailyMenuMakananDetail = pgTable(
       .notNull()
       .references(() => makanan.id, { onDelete: "cascade" }),
   },
-  (table) => [
-    unique("unique_daily_menu_makanan").on(table.dailyMenuId, table.makananId),
-  ]
+  (t) => [primaryKey({ columns: [t.dailyMenuId, t.makananId] })]
 );
 
 export const dailyMenuSnackDetail = pgTable(
   "daily_menu_snack_detail",
   {
-    id: serial("id").primaryKey(),
     dailyMenuId: integer("daily_menu_id")
       .notNull()
       .references(() => dailyMenu.id, { onDelete: "cascade" }),
@@ -53,7 +49,5 @@ export const dailyMenuSnackDetail = pgTable(
       .notNull()
       .references(() => snack.id, { onDelete: "cascade" }),
   },
-  (table) => [
-    unique("unique_daily_menu_snack").on(table.dailyMenuId, table.snackId),
-  ]
+  (t) => [primaryKey({ columns: [t.dailyMenuId, t.snackId] })]
 );

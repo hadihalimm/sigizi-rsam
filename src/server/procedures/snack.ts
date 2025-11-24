@@ -1,5 +1,5 @@
 import { os } from "@orpc/server";
-import { and, asc, eq, notInArray, sql } from "drizzle-orm";
+import { asc, eq, sql } from "drizzle-orm";
 import z from "zod";
 
 import db from "@/db";
@@ -43,20 +43,20 @@ export const snackProcedure = {
           makananTypeList: Array.from(
             new Map(
               group.map((row) => [
-                row.snack_makanan_type.id,
+                row.snack_makanan_type.makananTypeId,
                 { ...row.makanan_type },
               ])
             ).values()
           ),
           dietList: Array.from(
             new Map(
-              group.map((row) => [row.snack_diet.id, { ...row.diet }])
+              group.map((row) => [row.snack_diet.dietId, { ...row.diet }])
             ).values()
           ),
           snackResepDetail: Array.from(
             new Map(
               group.map((row) => [
-                row.snack_resep_detail.id,
+                row.snack_resep_detail.bahanMakananId,
                 {
                   ...row.bahan_makanan,
                   quantity: row.snack_resep_detail.quantity,
@@ -147,56 +147,17 @@ export const snackProcedure = {
             })
             .where(eq(snack.id, input.params.id));
 
-          if (input.body.makananTypeIds.length === 0) {
-            await tx
-              .delete(snackMakananType)
-              .where(eq(snackMakananType.snackId, input.params.id));
-          } else {
-            await tx
-              .delete(snackMakananType)
-              .where(
-                and(
-                  eq(snackMakananType.snackId, input.params.id),
-                  notInArray(
-                    snackMakananType.makananTypeId,
-                    input.body.makananTypeIds
-                  )
-                )
-              );
-          }
+          await tx
+            .delete(snackMakananType)
+            .where(eq(snackMakananType.snackId, input.params.id));
 
-          if (input.body.dietIds.length === 0) {
-            await tx
-              .delete(snackDiet)
-              .where(eq(snackDiet.snackId, input.params.id));
-          } else {
-            await tx
-              .delete(snackDiet)
-              .where(
-                and(
-                  eq(snackDiet.snackId, input.params.id),
-                  notInArray(snackDiet.dietId, input.body.dietIds)
-                )
-              );
-          }
+          await tx
+            .delete(snackDiet)
+            .where(eq(snackDiet.snackId, input.params.id));
 
-          if (input.body.snackResepDetail.length === 0) {
-            await tx
-              .delete(snackResepDetail)
-              .where(eq(snackResepDetail.snackId, input.params.id));
-          } else {
-            const bahanMakananIds = input.body.snackResepDetail.map(
-              (d) => d.bahanMakananId
-            );
-            await tx
-              .delete(snackResepDetail)
-              .where(
-                and(
-                  eq(snackResepDetail.snackId, input.params.id),
-                  notInArray(snackResepDetail.bahanMakananId, bahanMakananIds)
-                )
-              );
-          }
+          await tx
+            .delete(snackResepDetail)
+            .where(eq(snackResepDetail.snackId, input.params.id));
 
           const snackMakananTypeInput = input.body.makananTypeIds.map((id) => ({
             snackId: input.params.id,
@@ -267,20 +228,20 @@ export const snackProcedure = {
               makananTypeList: Array.from(
                 new Map(
                   group.map((row) => [
-                    row.snack_makanan_type.id,
+                    row.snack_makanan_type.makananTypeId,
                     { ...row.makanan_type },
                   ])
                 ).values()
               ),
               dietList: Array.from(
                 new Map(
-                  group.map((row) => [row.snack_diet.id, { ...row.diet }])
+                  group.map((row) => [row.snack_diet.dietId, { ...row.diet }])
                 ).values()
               ),
               snackResepDetail: Array.from(
                 new Map(
                   group.map((row) => [
-                    row.snack_resep_detail.id,
+                    row.snack_resep_detail.bahanMakananId,
                     {
                       ...row.bahan_makanan,
                       quantity: row.snack_resep_detail.quantity,

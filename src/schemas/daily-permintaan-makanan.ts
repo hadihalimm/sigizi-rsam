@@ -1,7 +1,7 @@
 import z from "zod";
 
 export const DailyPermintaanMakananCreateSchema = z.object({
-  day: z.date({ message: "Tanggal tidak boleh kosong" }),
+  day: z.string({ message: "Tanggal tidak boleh kosong" }),
   pasienId: z.number().nonnegative({ message: "Pasien ID tidak boleh kosong" }),
   ruanganId: z.number().positive({ message: "Ruangan ID tidak boleh kosong" }),
   makananTypeId: z
@@ -12,5 +12,5 @@ export const DailyPermintaanMakananCreateSchema = z.object({
     z.number().positive({ message: "Diet ID tidak boleh kosong" })
   ),
   note: z.string(),
-  pendampingCount: z.number().nonnegative(),
+  pendampingCount: z.number(),
 });

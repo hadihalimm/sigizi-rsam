@@ -1,5 +1,5 @@
 import { os } from "@orpc/server";
-import { and, asc, DrizzleError, eq, notInArray, sql } from "drizzle-orm";
+import { asc, DrizzleError, eq, sql } from "drizzle-orm";
 import z from "zod";
 
 import db from "@/db";
@@ -105,23 +105,9 @@ const makananProcedure = {
             })
             .where(eq(makanan.id, input.params.id));
 
-          if (input.body.makananResepDetail.length === 0) {
-            await tx
-              .delete(makananResepDetail)
-              .where(eq(makananResepDetail.makananId, input.params.id));
-          } else {
-            const bahanMakananIds = input.body.makananResepDetail.map(
-              (d) => d.bahanMakananId
-            );
-            await tx
-              .delete(makananResepDetail)
-              .where(
-                and(
-                  eq(makananResepDetail.makananId, input.params.id),
-                  notInArray(makananResepDetail.bahanMakananId, bahanMakananIds)
-                )
-              );
-          }
+          await tx
+            .delete(makananResepDetail)
+            .where(eq(makananResepDetail.makananId, input.params.id));
 
           const makananResepDetailInput = input.body.makananResepDetail.map(
             (detail) => ({

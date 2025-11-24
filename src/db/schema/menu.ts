@@ -1,10 +1,10 @@
 import {
   integer,
   pgTable,
+  primaryKey,
   serial,
   text,
   timestamp,
-  unique,
 } from "drizzle-orm/pg-core";
 
 import { makanan } from "./makanan";
@@ -35,7 +35,6 @@ export const menu = pgTable("menu", {
 export const menuMakananDetail = pgTable(
   "menu_makanan_detail",
   {
-    id: serial("id").primaryKey(),
     menuId: integer("menu_id")
       .notNull()
       .references(() => menu.id, { onDelete: "cascade" }),
@@ -43,13 +42,12 @@ export const menuMakananDetail = pgTable(
       .notNull()
       .references(() => makanan.id, { onDelete: "cascade" }),
   },
-  (t) => [unique().on(t.menuId, t.makananId)]
+  (t) => [primaryKey({ columns: [t.menuId, t.makananId] })]
 );
 
 export const menuSnackDetail = pgTable(
   "menu_snack_detail",
   {
-    id: serial("id").primaryKey(),
     menuId: integer("menu_id")
       .notNull()
       .references(() => menu.id, { onDelete: "cascade" }),
@@ -57,5 +55,5 @@ export const menuSnackDetail = pgTable(
       .notNull()
       .references(() => snack.id, { onDelete: "cascade" }),
   },
-  (t) => [unique().on(t.menuId, t.snackId)]
+  (t) => [primaryKey({ columns: [t.menuId, t.snackId] })]
 );

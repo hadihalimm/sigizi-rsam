@@ -1,5 +1,5 @@
 import { os } from "@orpc/server";
-import { and, eq, notInArray } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import z from "zod";
 
 import db from "@/db";
@@ -129,35 +129,13 @@ export const menuProcedure = {
             })
             .where(eq(menu.id, input.params.id));
 
-          if (input.body.makananIds.length === 0) {
-            await tx
-              .delete(menuMakananDetail)
-              .where(eq(menuMakananDetail.menuId, input.params.id));
-          } else {
-            await tx
-              .delete(menuMakananDetail)
-              .where(
-                and(
-                  eq(menuMakananDetail.menuId, input.params.id),
-                  notInArray(menuMakananDetail.makananId, input.body.makananIds)
-                )
-              );
-          }
+          await tx
+            .delete(menuMakananDetail)
+            .where(eq(menuMakananDetail.menuId, input.params.id));
 
-          if (input.body.snackIds.length === 0) {
-            await tx
-              .delete(menuSnackDetail)
-              .where(eq(menuSnackDetail.menuId, input.params.id));
-          } else {
-            await tx
-              .delete(menuSnackDetail)
-              .where(
-                and(
-                  eq(menuSnackDetail.menuId, input.params.id),
-                  notInArray(menuSnackDetail.snackId, input.body.snackIds)
-                )
-              );
-          }
+          await tx
+            .delete(menuSnackDetail)
+            .where(eq(menuSnackDetail.menuId, input.params.id));
 
           const menuMakananDetailInput = input.body.makananIds.map((id) => ({
             menuId: input.params.id,

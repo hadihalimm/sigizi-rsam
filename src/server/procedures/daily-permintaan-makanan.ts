@@ -1,6 +1,6 @@
 import { os } from "@orpc/server";
 import { subDays } from "date-fns";
-import { and, desc, eq, notInArray, sql } from "drizzle-orm";
+import { and, desc, eq, sql } from "drizzle-orm";
 import { NodePgDatabase } from "drizzle-orm/node-postgres";
 import z from "zod";
 
@@ -75,7 +75,7 @@ export const dailyPermintaanMakananProcedure = {
           const [newPermintaan] = await tx
             .insert(dailyPermintaanMakanan)
             .values({
-              day: input.day,
+              day: new Date(input.day),
               pasienId: input.pasienId,
               ruanganId: input.ruanganId,
               makananTypeId: input.makananTypeId,
@@ -147,31 +147,14 @@ export const dailyPermintaanMakananProcedure = {
             })
             .where(eq(dailyPermintaanMakanan.id, input.params.id));
 
-          if (input.body.dietIds.length === 0) {
-            await tx
-              .delete(dailyPermintaanMakananDiet)
-              .where(
-                eq(
-                  dailyPermintaanMakananDiet.dailyPermintaanMakananId,
-                  input.params.id
-                )
-              );
-          } else {
-            await tx
-              .delete(dailyPermintaanMakananDiet)
-              .where(
-                and(
-                  eq(
-                    dailyPermintaanMakananDiet.dailyPermintaanMakananId,
-                    input.params.id
-                  ),
-                  notInArray(
-                    dailyPermintaanMakananDiet.dietId,
-                    input.body.dietIds
-                  )
-                )
-              );
-          }
+          await tx
+            .delete(dailyPermintaanMakananDiet)
+            .where(
+              eq(
+                dailyPermintaanMakananDiet.dailyPermintaanMakananId,
+                input.params.id
+              )
+            );
 
           const permintaanDietInput = input.body.dietIds.sort().map((id) => ({
             dailyPermintaanMakananId: input.params.id,
@@ -288,7 +271,7 @@ export const dailyPermintaanMakananProcedure = {
               dailyPermintaanMakananDietList: Array.from(
                 new Map(
                   group.map((row) => [
-                    row.daily_permintaan_makanan_diet.id,
+                    row.daily_permintaan_makanan_diet.dietId,
                     { ...row.daily_permintaan_makanan_diet },
                   ])
                 ).values()
@@ -429,13 +412,3 @@ function generatePermintaanLog(
   if (Object.keys(changes.old).length === 0) return null;
   return changes;
 }
-
-export const dailyPermintaanMakananPendampingProcedure = {
-  getAll: os
-    .route({ path: "/", method: "GET" })
-    .input(z.object({ date: z.string() }))
-    .handler(async ({ input }) => {
-      try {
-      } catch (error) {}
-    }),
-};
