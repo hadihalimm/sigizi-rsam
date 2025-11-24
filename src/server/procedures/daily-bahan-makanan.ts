@@ -47,12 +47,9 @@ export const dailyBahanMakananProcedure = {
         yesterdayDate,
         todayDate
       );
-      const prevDailyBahanMakanan = await getDailyBahanMakananByDate(todayDate);
-      if (prevDailyBahanMakanan.length > 0) {
-        await db
-          .delete(dailyBahanMakanan)
-          .where(and(eq(dailyBahanMakanan.day, todayDate)));
-      }
+      await db
+        .delete(dailyBahanMakanan)
+        .where(and(eq(dailyBahanMakanan.day, todayDate)));
 
       const newRows = await db
         .insert(dailyBahanMakanan)
