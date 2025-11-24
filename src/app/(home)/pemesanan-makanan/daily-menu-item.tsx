@@ -6,6 +6,17 @@ import { useState } from "react";
 import { toast } from "sonner";
 
 import { useAppForm } from "@/components/form";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import {
   Item,
@@ -13,10 +24,37 @@ import {
   ItemContent,
   ItemTitle,
 } from "@/components/ui/item";
+import { dailyBahanMakananQuery } from "@/query/daily-bahan-makanan";
 import { dailyMenuDetailQuery } from "@/query/daily-menu";
 import { DailyMenuDetailSchema } from "@/schemas/daily-menu";
 import { orpc } from "@/server/orpc";
-import { DailyMenuDetail } from "@/types/db";
+import { useDateStore } from "@/stores/use-date-store";
+
+type DailyMenuDetail = {
+  dailyMenu: {
+    id: number;
+    day: Date;
+    menuId: number | null;
+    createdAt: Date;
+    updatedAt: Date;
+  };
+  menu: {
+    id: number;
+    name: string;
+    menuOrder: number;
+    menuPeriod: string;
+    menuBookId: number;
+  } | null;
+  makananList: {
+    id?: number | undefined;
+    name?: string | undefined;
+    makananTypeId?: number | undefined;
+  }[];
+  snackList: {
+    id?: number | undefined;
+    name?: string | undefined;
+  }[];
+};
 
 interface DailyMenuItemProps {
   item: DailyMenuDetail;
@@ -24,6 +62,7 @@ interface DailyMenuItemProps {
 
 const DailyMenuItem = ({ item }: DailyMenuItemProps) => {
   const [isEditing, setIsEditing] = useState(false);
+  if (!item) return null;
   if (isEditing)
     return (
       <DailyMenuItemForm
@@ -80,6 +119,11 @@ const DailyMenuItemForm = ({
   initialData,
   onClose,
 }: DailyMenuItemFormProps) => {
+  const { dates } = useDateStore();
+  const pemesananDate = dates["pemesananDate"];
+  const generateDailyBahanMakanan = dailyBahanMakananQuery.useGenerateByDate(
+    pemesananDate.toLocaleDateString("en-CA")
+  );
   const { data: makananList } = useSuspenseQuery(
     orpc.makanan.getAll.queryOptions()
   );
@@ -90,8 +134,12 @@ const DailyMenuItemForm = ({
   const updateDailyMenuDetail = dailyMenuDetailQuery.useUpdateDailyMenuDetail();
   const form = useAppForm({
     defaultValues: {
-      makananIds: initialData.makananList.map((item) => item.id),
-      snackIds: initialData.snackList.map((item) => item.id),
+      makananIds: initialData.makananList
+        .filter((item) => item.id !== undefined)
+        .map((item) => item?.id),
+      snackIds: initialData.snackList
+        .filter((item) => item.id !== undefined)
+        .map((item) => item?.id),
     },
     validators: {
       onChange: DailyMenuDetailSchema,
@@ -103,13 +151,16 @@ const DailyMenuItemForm = ({
           params: { dailyMenuId: initialData.dailyMenu.id },
           body: payload,
         });
-
+        await generateDailyBahanMakanan.mutateAsync({
+          date: pemesananDate.toLocaleDateString("en-CA"),
+        });
         onClose();
       } catch (error) {
         toast.error(String(error));
       }
     },
   });
+  console.log(form.getFieldValue("snackIds"));
   return (
     <Item
       variant="outline"
@@ -162,11 +213,30 @@ const DailyMenuItemForm = ({
           >
             <X />
           </Button>
-          <form.AppForm>
-            <form.SubscribeButton variant="outline" size="icon-sm" label="">
-              <Check />
-            </form.SubscribeButton>
-          </form.AppForm>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button variant="outline" size="icon-sm">
+                <Check />
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Apakah anda yakin?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Mengubah daftar menu akan mengubah daftar pemesanan bahan
+                  makanan
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel onClick={() => onClose()}>
+                  Cancel
+                </AlertDialogCancel>
+                <AlertDialogAction onClick={() => form.handleSubmit()}>
+                  Ya, saya yakin
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </ItemActions>
       </form>
     </Item>

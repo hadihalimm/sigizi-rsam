@@ -9,7 +9,6 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 
-import { Button } from "@/components/ui/button";
 import { FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import {
@@ -20,7 +19,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { dailyBahanMakananQuery } from "@/query/daily-bahan-makanan";
 import { orpc } from "@/server/orpc";
 import { useDateStore } from "@/stores/use-date-store";
 
@@ -72,12 +70,10 @@ const BahanMakananTable = () => {
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
   });
-  const generateDailyBahanMakanan = dailyBahanMakananQuery.useGenerateByDate(
-    pemesananDate.toLocaleDateString("en-CA")
-  );
 
   return (
     <div className="flex flex-col gap-4">
+      <h2 className="font-semibold text-lg">Daftar Pemesanan Bahan Makanan</h2>
       <div className="flex justify-between gap-2 items-end">
         <div className="flex flex-col flex-1 gap-1 w-1/2">
           <FieldLabel>Cari bahan makanan</FieldLabel>
@@ -94,7 +90,7 @@ const BahanMakananTable = () => {
             }
           />
         </div>
-        {dailyBahanMakanan.length === 0 && (
+        {/*{dailyBahanMakanan.length === 0 && (
           <Button
             className="w-1/2 flex-1 h-auto whitespace-normal"
             onClick={async () =>
@@ -105,7 +101,7 @@ const BahanMakananTable = () => {
           >
             <span>Generate bahan makanan</span>
           </Button>
-        )}
+        )}*/}
       </div>
 
       <div className="rounded-md border overflow-hidden">

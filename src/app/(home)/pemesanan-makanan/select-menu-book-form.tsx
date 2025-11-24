@@ -2,7 +2,6 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 import { useAppForm } from "@/components/form";
-import { Button } from "@/components/ui/button";
 import {
   Empty,
   EmptyContent,
@@ -10,14 +9,21 @@ import {
   EmptyHeader,
   EmptyTitle,
 } from "@/components/ui/empty";
+import { dailyBahanMakananQuery } from "@/query/daily-bahan-makanan";
 import { dailyMenuQuery } from "@/query/daily-menu";
 import { orpc } from "@/server/orpc";
+import { useDateStore } from "@/stores/use-date-store";
 
 interface SelectMenuBookFormProps {
   date: Date;
 }
 
 const SelectMenuBookForm = ({ date }: SelectMenuBookFormProps) => {
+  const { dates } = useDateStore();
+  const pemesananDate = dates["pemesananDate"];
+  const generateDailyBahanMakanan = dailyBahanMakananQuery.useGenerateByDate(
+    pemesananDate.toLocaleDateString("en-CA")
+  );
   const { data: menuBookList } = useSuspenseQuery(
     orpc.menuBook.getAll.queryOptions()
   );
@@ -38,6 +44,9 @@ const SelectMenuBookForm = ({ date }: SelectMenuBookFormProps) => {
         await createManyByMenuBook.mutateAsync({
           day: date.toLocaleDateString("en-CA"),
           menuBookId: Number(value.menuBookId),
+        });
+        await generateDailyBahanMakanan.mutateAsync({
+          date: pemesananDate.toLocaleDateString("en-CA"),
         });
       } catch (error) {
         toast.error(String(error));

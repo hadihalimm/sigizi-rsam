@@ -29,16 +29,16 @@ export const dailyMenuProcedure = {
         const rows = await db
           .select()
           .from(dailyMenu)
-          .innerJoin(
+          .leftJoin(
             dailyMenuMakananDetail,
             eq(dailyMenu.id, dailyMenuMakananDetail.dailyMenuId)
           )
-          .innerJoin(makanan, eq(dailyMenuMakananDetail.makananId, makanan.id))
-          .innerJoin(
+          .leftJoin(makanan, eq(dailyMenuMakananDetail.makananId, makanan.id))
+          .leftJoin(
             dailyMenuSnackDetail,
             eq(dailyMenu.id, dailyMenuSnackDetail.dailyMenuId)
           )
-          .innerJoin(snack, eq(dailyMenuSnackDetail.snackId, snack.id))
+          .leftJoin(snack, eq(dailyMenuSnackDetail.snackId, snack.id))
           .leftJoin(menu, eq(dailyMenu.menuId, menu.id))
           .where(eq(dailyMenu.day, new Date(input.date)));
 
@@ -49,12 +49,12 @@ export const dailyMenuProcedure = {
             menu: group[0].menu,
             makananList: Array.from(
               new Map(
-                group.map((row) => [row.makanan.id, { ...row.makanan }])
+                group.map((row) => [row.makanan?.id, { ...row.makanan }])
               ).values()
             ),
             snackList: Array.from(
               new Map(
-                group.map((row) => [row.snack.id, { ...row.snack }])
+                group.map((row) => [row.snack?.id, { ...row.snack }])
               ).values()
             ),
           })
