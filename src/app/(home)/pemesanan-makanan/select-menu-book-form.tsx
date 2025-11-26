@@ -14,11 +14,7 @@ import { dailyMenuQuery } from "@/query/daily-menu";
 import { orpc } from "@/server/orpc";
 import { useDateStore } from "@/stores/use-date-store";
 
-interface SelectMenuBookFormProps {
-  date: Date;
-}
-
-const SelectMenuBookForm = ({ date }: SelectMenuBookFormProps) => {
+const SelectMenuBookForm = () => {
   const { dates } = useDateStore();
   const pemesananDate = dates["pemesananDate"];
   const generateDailyBahanMakanan = dailyBahanMakananQuery.useGenerateByDate(
@@ -42,7 +38,7 @@ const SelectMenuBookForm = ({ date }: SelectMenuBookFormProps) => {
     onSubmit: async ({ value }) => {
       try {
         await createManyByMenuBook.mutateAsync({
-          day: date.toLocaleDateString("en-CA"),
+          day: pemesananDate.toLocaleDateString("en-CA"),
           menuBookId: Number(value.menuBookId),
         });
         await generateDailyBahanMakanan.mutateAsync({

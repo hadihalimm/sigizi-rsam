@@ -33,9 +33,7 @@ const DailyMenu = () => {
         </Field>
       </div>
 
-      {dailyMenuList.length === 0 && (
-        <SelectMenuBookForm date={dates["pemesananDate"]} />
-      )}
+      {dailyMenuList.length === 0 && <SelectMenuBookForm />}
 
       <ItemGroup className="flex lg:flex-row gap-4">
         {dailyMenuList.map((item) => (
