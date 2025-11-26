@@ -1,6 +1,6 @@
 import {
-  doublePrecision,
   integer,
+  numeric,
   pgTable,
   primaryKey,
   serial,
@@ -51,7 +51,7 @@ export const snackResepDetail = pgTable(
     bahanMakananId: integer("bahan_makanan_id")
       .notNull()
       .references(() => bahanMakanan.id, { onDelete: "cascade" }),
-    quantity: doublePrecision("quantity").notNull(),
+    quantity: numeric("quantity", { mode: "number" }).notNull(),
   },
   (t) => [primaryKey({ columns: [t.snackId, t.bahanMakananId] })]
 );
