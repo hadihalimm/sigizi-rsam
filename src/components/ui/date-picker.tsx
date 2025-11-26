@@ -46,7 +46,7 @@ export default function DatePicker({
         <Calendar
           mode="single"
           selected={date}
-          onSelect={(value) => handleValueChange(value)}
+          onSelect={(value) => handleValueChange(value ?? date)}
           captionLayout="dropdown"
         />
       </PopoverContent>
