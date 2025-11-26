@@ -108,8 +108,22 @@ export const dailyMenuProcedure = {
             Map.groupBy(menus, (rows) => rows.menu.id),
             ([, group]) => ({
               menu: group[0].menu,
-              makananDetailList: group.map((row) => row.menu_makanan_detail),
-              snackDetailList: group.map((row) => row.menu_snack_detail),
+              makananDetailList: Array.from(
+                new Map(
+                  group.map((row) => [
+                    row.menu_makanan_detail.makananId,
+                    { ...row.menu_makanan_detail },
+                  ])
+                ).values()
+              ),
+              snackDetailList: Array.from(
+                new Map(
+                  group.map((row) => [
+                    row.menu_snack_detail.snackId,
+                    { ...row.menu_snack_detail },
+                  ])
+                ).values()
+              ),
             })
           );
 
