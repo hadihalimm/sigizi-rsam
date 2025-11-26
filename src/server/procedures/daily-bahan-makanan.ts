@@ -20,6 +20,8 @@ import {
   treatmentClass,
 } from "@/db/schema";
 
+import { handleORPCError } from "../utils";
+
 export const dailyBahanMakananProcedure = {
   getAll: os
     .route({ path: "/", method: "GET" })
@@ -40,33 +42,38 @@ export const dailyBahanMakananProcedure = {
       })
     )
     .handler(async ({ input }) => {
-      const todayDate = new Date(input.date);
-      const yesterdayDate = new Date(input.date);
-      yesterdayDate.setDate(yesterdayDate.getDate() - 1);
-      const dailyBahanMakananMap = await generateDailyBahanMakananMap(
-        yesterdayDate,
-        todayDate
-      );
-      await db
-        .delete(dailyBahanMakanan)
-        .where(and(eq(dailyBahanMakanan.day, todayDate)));
+      try {
+        const todayDate = new Date(input.date);
+        const yesterdayDate = new Date(input.date);
+        yesterdayDate.setDate(yesterdayDate.getDate() - 1);
+        const dailyBahanMakananMap = await generateDailyBahanMakananMap(
+          yesterdayDate,
+          todayDate
+        );
+        await db
+          .delete(dailyBahanMakanan)
+          .where(and(eq(dailyBahanMakanan.day, todayDate)));
 
-      const newRows = await db
-        .insert(dailyBahanMakanan)
-        .values(Array.from(dailyBahanMakananMap.values()))
-        .onConflictDoUpdate({
-          target: [
-            dailyBahanMakanan.day,
-            dailyBahanMakanan.bahanMakananId,
-            dailyBahanMakanan.treatmentClassId,
-          ],
-          set: {
-            quantity: sql.raw(`excluded.${dailyBahanMakanan.quantity.name}`),
-          },
-        })
-        .returning();
+        const newRows = await db
+          .insert(dailyBahanMakanan)
+          .values(Array.from(dailyBahanMakananMap.values()))
+          .onConflictDoUpdate({
+            target: [
+              dailyBahanMakanan.day,
+              dailyBahanMakanan.bahanMakananId,
+              dailyBahanMakanan.treatmentClassId,
+            ],
+            set: {
+              quantity: sql.raw(`excluded.${dailyBahanMakanan.quantity.name}`),
+            },
+          })
+          .returning();
 
-      return newRows;
+        return newRows;
+      } catch (error) {
+        console.error(error);
+        handleORPCError(error);
+      }
     }),
 };
 
