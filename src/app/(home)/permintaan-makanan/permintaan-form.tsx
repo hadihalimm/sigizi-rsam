@@ -318,6 +318,8 @@ const PermintaanMakananForm = ({ initialData }: PermintaanMakananFormProps) => {
                     );
                     if (treatmentClass?.code.toLowerCase().includes("vip")) {
                       setIsPasienVip(true);
+                    } else {
+                      permintaanForm.setFieldValue("pendampingCount", 0);
                     }
                   }}
                 />
