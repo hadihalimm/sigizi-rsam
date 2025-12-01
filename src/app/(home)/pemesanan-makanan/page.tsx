@@ -2,7 +2,7 @@ import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 
 import { getQueryClient } from "@/lib/get-query-client";
 
-import BahanMakananTable from "./bahan-makanan-table";
+import BahanMakananTables from "./bahan-makanan-table";
 import DailyMenu from "./daily-menu";
 
 const PermintaanMakananPage = () => {
@@ -12,7 +12,7 @@ const PermintaanMakananPage = () => {
       <h1 className="font-semibold text-2xl">Pemesanan Bahan Makanan</h1>
       <HydrationBoundary state={dehydrate(queryClient)}>
         <DailyMenu />
-        <BahanMakananTable />
+        <BahanMakananTables />
       </HydrationBoundary>
     </main>
   );

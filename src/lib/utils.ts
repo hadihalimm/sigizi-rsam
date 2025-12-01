@@ -9,3 +9,6 @@ export function cn(...inputs: ClassValue[]) {
 export function isFieldInvalid(meta: AnyFieldMeta) {
   return meta.isTouched && !meta.isValid;
 }
+
+export const capitalizeFirst = (s: string) =>
+  s.charAt(0).toUpperCase() + s.slice(1);

@@ -19,6 +19,7 @@ import {
   snackResepDetail,
   treatmentClass,
 } from "@/db/schema";
+import { DailyBahanMakananUpdateSchema } from "@/schemas/daily-bahan-makanan";
 
 import { handleORPCError } from "../utils";
 
@@ -28,10 +29,14 @@ export const dailyBahanMakananProcedure = {
     .input(
       z.object({
         date: z.string(),
+        bahanMakananCategory: z.string().optional(),
       })
     )
     .handler(async ({ input }) => {
-      return await getDailyBahanMakananByDate(new Date(input.date));
+      return await getDailyBahanMakananByDate(
+        new Date(input.date),
+        input.bahanMakananCategory
+      );
     }),
 
   generateByDate: os
@@ -75,9 +80,39 @@ export const dailyBahanMakananProcedure = {
         handleORPCError(error);
       }
     }),
+
+  updateDailyBahanMakanan: os
+    .route({ path: "/", method: "PUT" })
+    .input(DailyBahanMakananUpdateSchema)
+    .handler(async ({ input }) => {
+      const rows = await db
+        .insert(dailyBahanMakanan)
+        .values(
+          input.dailyBahanMakanan.map((item) => ({
+            ...item,
+            day: new Date(item.date),
+          }))
+        )
+        .onConflictDoUpdate({
+          target: [
+            dailyBahanMakanan.day,
+            dailyBahanMakanan.bahanMakananId,
+            dailyBahanMakanan.treatmentClassId,
+          ],
+          set: {
+            quantity: sql.raw(`excluded.${dailyBahanMakanan.quantity.name}`),
+          },
+        })
+        .returning();
+
+      return rows;
+    }),
 };
 
-const getDailyBahanMakananByDate = async (date: Date) => {
+const getDailyBahanMakananByDate = async (
+  date: Date,
+  bahanMakananCategory?: string
+) => {
   const rows = await db
     .select()
     .from(dailyBahanMakanan)
@@ -89,7 +124,14 @@ const getDailyBahanMakananByDate = async (date: Date) => {
       treatmentClass,
       eq(dailyBahanMakanan.treatmentClassId, treatmentClass.id)
     )
-    .where(eq(dailyBahanMakanan.day, date))
+    .where(
+      and(
+        eq(dailyBahanMakanan.day, date),
+        bahanMakananCategory
+          ? eq(bahanMakanan.category, bahanMakananCategory)
+          : undefined
+      )
+    )
     .orderBy(asc(bahanMakanan.name));
 
   const groupedMap = Map.groupBy(rows, (row) => row.bahan_makanan.id);

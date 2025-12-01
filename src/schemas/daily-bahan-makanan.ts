@@ -1,13 +1,12 @@
 import z from "zod";
 
 export const DailyBahanMakananUpdateSchema = z.object({
-  treatmentClassId: z.number(),
-  bahanMakananId: z.number(),
-  quantity: z.number(),
+  dailyBahanMakanan: z.array(
+    z.object({
+      date: z.string(),
+      bahanMakananId: z.number(),
+      treatmentClassId: z.number(),
+      quantity: z.number().nonnegative(),
+    })
+  ),
 });
-
-export const DailyBahanMakananBatchUpdateSchema = z.array(
-  DailyBahanMakananUpdateSchema.extend({
-    id: z.number(),
-  })
-);
