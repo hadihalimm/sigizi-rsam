@@ -4,6 +4,7 @@ export * from "./daily-bahan-makanan";
 export * from "./daily-menu";
 export * from "./daily-permintaan-makanan";
 export * from "./diet";
+export * from "./gudang";
 export * from "./makanan";
 export * from "./menu";
 export * from "./pasien";

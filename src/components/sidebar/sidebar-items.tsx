@@ -9,6 +9,7 @@ import {
   HandPlatter,
   LayoutDashboard,
   Table,
+  Warehouse,
 } from "lucide-react";
 
 interface groupProps {
@@ -55,6 +56,11 @@ export const adminGroup: groupProps[] = [
     title: "Daftar Bahan Makanan",
     url: "/admin/bahan-makanan",
     icon: <Carrot className="size-5" />,
+  },
+  {
+    title: "Gudang",
+    url: "/admin/gudang",
+    icon: <Warehouse className="size-5" />,
   },
   {
     title: "Daftar Diet",

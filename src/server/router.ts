@@ -10,6 +10,10 @@ import {
   dailyPermintaanMakananProcedure,
 } from "./procedures/daily-permintaan-makanan";
 import { dietProcedure } from "./procedures/diet";
+import {
+  stockBahanMakananHistoryProcedure,
+  stockBahanMakananProcedure,
+} from "./procedures/gudang";
 import { makananProcedure, makananTypeProcedure } from "./procedures/makanan";
 import { menuBookProcedure, menuProcedure } from "./procedures/menu";
 import { pasienProcedure } from "./procedures/pasien";
@@ -38,4 +42,6 @@ export const router = {
   dailyMenu: dailyMenuProcedure,
   dailyMenuDetail: dailyMenuDetailProcedure,
   dailyBahanMakanan: dailyBahanMakananProcedure,
+  stockBahanMakanan: stockBahanMakananProcedure,
+  stockBahanMakananHistory: stockBahanMakananHistoryProcedure,
 };
