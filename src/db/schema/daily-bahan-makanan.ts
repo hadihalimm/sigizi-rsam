@@ -21,7 +21,7 @@ export const dailyBahanMakanan = pgTable(
     treatmentClassId: integer("treatment_class_id")
       .notNull()
       .references(() => treatmentClass.id, { onDelete: "cascade" }),
-    quantity: numeric("quantity", { mode: "number" }),
+    quantity: numeric("quantity", { mode: "number" }).notNull(),
   },
   (table) => [
     primaryKey({
