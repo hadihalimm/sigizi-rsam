@@ -58,7 +58,7 @@ export const adminGroup: groupProps[] = [
     icon: <Carrot className="size-5" />,
   },
   {
-    title: "Gudang",
+    title: "Gudang Bahan Makanan",
     url: "/admin/gudang",
     icon: <Warehouse className="size-5" />,
   },
