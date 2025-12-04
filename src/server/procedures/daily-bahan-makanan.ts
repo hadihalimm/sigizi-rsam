@@ -17,6 +17,7 @@ import {
   snack,
   snackMakananType,
   snackResepDetail,
+  stockBahanMakanan,
   treatmentClass,
 } from "@/db/schema";
 import { DailyBahanMakananUpdateSchema } from "@/schemas/daily-bahan-makanan";
@@ -205,6 +206,11 @@ const generateDailyBahanMakananMap = async (
     )
     .where(eq(dailyMenu.day, todayDate));
 
+  const stockBahanMakananList = await db.select().from(stockBahanMakanan);
+  const stockBahanMakananMap = new Map(
+    stockBahanMakananList.map((row) => [row.bahanMakananId, row])
+  );
+
   const makananGroup = new Map(
     Array.from(
       Map.groupBy(makananList, (row) => row.makanan.makananTypeId),
@@ -316,5 +322,21 @@ const generateDailyBahanMakananMap = async (
       }
     }
   }
+
+  for (const [key, item] of dailyBahanMakananMap.entries()) {
+    const stockBahanMakanan = stockBahanMakananMap.get(item.bahanMakananId);
+    if (!stockBahanMakanan) {
+      throw new Error("Stok Bahan makanan tidak ditemukan");
+    }
+    const jumlahPemesanan = Math.max(
+      item.quantity - stockBahanMakanan.quantity,
+      0
+    );
+    dailyBahanMakananMap.set(key, {
+      ...item,
+      quantity: jumlahPemesanan,
+    });
+  }
+
   return dailyBahanMakananMap;
 };
