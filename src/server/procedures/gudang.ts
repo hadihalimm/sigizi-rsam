@@ -59,13 +59,15 @@ const stockBahanMakananHistoryProcedure = {
     .route({ path: "/{id}", method: "GET" })
     .input(
       z.object({
-        id: z.number(),
+        bahanMakananId: z.number(),
         cursor: z.string().optional(),
       })
     )
     .handler(async ({ input }) => {
       try {
-        const conditions = [eq(stockBahanMakananHistory.id, input.id)];
+        const conditions = [
+          eq(stockBahanMakananHistory.bahanMakananId, input.bahanMakananId),
+        ];
         if (input.cursor) {
           conditions.push(
             lte(stockBahanMakananHistory.createdAt, new Date(input.cursor))

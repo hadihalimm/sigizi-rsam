@@ -37,6 +37,7 @@ import {
 import { useAppDialog } from "@/hooks/use-dialog";
 import { orpc } from "@/server/orpc";
 
+import StockDetail from "./detail";
 import StockUpdateForm from "./form";
 
 const StockBahanMakananTable = () => {
@@ -44,6 +45,7 @@ const StockBahanMakananTable = () => {
     orpc.stockBahanMakanan.getAll.queryOptions()
   );
   const createDialog = useAppDialog("createStockBahanMakananHistory");
+  const detailDialog = useAppDialog("detailStockBahanMakananHistory");
   const [selectedItem, setSelectedItem] = useState<(typeof stock)[number]>();
 
   const columns = useMemo(() => {
@@ -111,7 +113,10 @@ const StockBahanMakananTable = () => {
             actions={[
               {
                 label: "Detail",
-                onClick: () => {},
+                onClick: () => {
+                  setSelectedItem(row.original);
+                  setTimeout(() => detailDialog.open(), 0);
+                },
               },
               {
                 label: "Update",
@@ -234,6 +239,23 @@ const StockBahanMakananTable = () => {
           }
         >
           <StockUpdateForm initialData={selectedItem} />
+        </Suspense>
+      </AppDialog>
+
+      <AppDialog
+        id="detailStockBahanMakananHistory"
+        title="Detail Stok"
+        description={selectedItem?.bahan_makanan.name}
+        className="lg:w-1/3"
+      >
+        <Suspense
+          fallback={
+            <Spinner className="size-10 flex w-full justify-center items-center" />
+          }
+        >
+          <StockDetail
+            bahanMakananStockId={selectedItem?.stock_bahan_makanan.id ?? 0}
+          />
         </Suspense>
       </AppDialog>
     </div>
