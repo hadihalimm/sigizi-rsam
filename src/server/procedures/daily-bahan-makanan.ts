@@ -176,7 +176,7 @@ const generateDailyBahanMakananMap = async (
     .where(eq(dailyPermintaanMakanan.day, yesterdayDate));
 
   const makananList = await db
-    .select({ makanan, makananType, bahanMakanan })
+    .select({ makanan, makananResepDetail, makananType, bahanMakanan })
     .from(dailyMenu)
     .innerJoin(
       dailyMenuMakananDetail,
@@ -191,7 +191,7 @@ const generateDailyBahanMakananMap = async (
     )
     .where(eq(dailyMenu.day, todayDate));
   const snackList = await db
-    .select({ snack, snackMakananType, bahanMakanan })
+    .select({ snack, snackResepDetail, snackMakananType, bahanMakanan })
     .from(dailyMenu)
     .innerJoin(
       dailyMenuSnackDetail,
@@ -223,6 +223,7 @@ const generateDailyBahanMakananMap = async (
             ([, rows]) => ({
               ...rows[0].makanan,
               bahanMakananList: rows.map((row) => row.bahanMakanan),
+              makananResepDetail: rows.map((row) => row.makananResepDetail),
             })
           ),
         },
@@ -241,6 +242,7 @@ const generateDailyBahanMakananMap = async (
             ([, rows]) => ({
               ...rows[0].snack,
               bahanMakananList: rows.map((row) => row.bahanMakanan),
+              snackResepDetail: rows.map((row) => row.snackResepDetail),
             })
           ),
         },
@@ -261,31 +263,31 @@ const generateDailyBahanMakananMap = async (
   if (permintaanVip) {
     const selectedMakananList = makananGroup.get(permintaanVip.makananTypeId);
     for (const makanan of selectedMakananList?.makanan ?? []) {
-      for (const bahan of makanan.bahanMakananList) {
-        const prev = dailyBahanMakananMap.get(bahan.id) ?? {
+      for (const bahan of makanan.makananResepDetail) {
+        const prev = dailyBahanMakananMap.get(bahan.bahanMakananId) ?? {
           day: todayDate,
-          bahanMakananId: bahan.id,
+          bahanMakananId: bahan.bahanMakananId,
           treatmentClassId: permintaanVip.treatmentClassId,
           quantity: 0,
         };
-        dailyBahanMakananMap.set(bahan.id, {
+        dailyBahanMakananMap.set(bahan.bahanMakananId, {
           ...prev,
-          quantity: prev.quantity! + bahan.standard * Number(pendamping.sum),
+          quantity: prev.quantity! + bahan.quantity * Number(pendamping.sum),
         });
       }
     }
     const selectedSnackList = snackGroup.get(permintaanVip.makananTypeId);
     for (const snack of selectedSnackList?.snack ?? []) {
-      for (const bahan of snack.bahanMakananList) {
-        const prev = dailyBahanMakananMap.get(bahan.id) ?? {
+      for (const bahan of snack.snackResepDetail) {
+        const prev = dailyBahanMakananMap.get(bahan.bahanMakananId) ?? {
           day: todayDate,
-          bahanMakananId: bahan.id,
+          bahanMakananId: bahan.bahanMakananId,
           treatmentClassId: permintaanVip.treatmentClassId,
           quantity: 0,
         };
-        dailyBahanMakananMap.set(bahan.id, {
+        dailyBahanMakananMap.set(bahan.bahanMakananId, {
           ...prev,
-          quantity: prev.quantity! + bahan.standard * Number(pendamping.sum),
+          quantity: prev.quantity! + bahan.quantity * Number(pendamping.sum),
         });
       }
     }
@@ -294,30 +296,30 @@ const generateDailyBahanMakananMap = async (
     const selectedMakananList = makananGroup.get(item.makananTypeId);
     const selectedSnackList = snackGroup.get(item.makananTypeId);
     for (const makanan of selectedMakananList?.makanan ?? []) {
-      for (const bahan of makanan.bahanMakananList) {
-        const prev = dailyBahanMakananMap.get(bahan.id) ?? {
+      for (const bahan of makanan.makananResepDetail) {
+        const prev = dailyBahanMakananMap.get(bahan.bahanMakananId) ?? {
           day: todayDate,
-          bahanMakananId: bahan.id,
+          bahanMakananId: bahan.bahanMakananId,
           treatmentClassId: item.treatmentClassId,
           quantity: 0,
         };
-        dailyBahanMakananMap.set(bahan.id, {
+        dailyBahanMakananMap.set(bahan.bahanMakananId, {
           ...prev,
-          quantity: prev.quantity! + bahan.standard * item.count,
+          quantity: prev.quantity! + bahan.quantity * item.count,
         });
       }
     }
     for (const snack of selectedSnackList?.snack ?? []) {
-      for (const bahan of snack.bahanMakananList) {
-        const prev = dailyBahanMakananMap.get(bahan.id) ?? {
+      for (const bahan of snack.snackResepDetail) {
+        const prev = dailyBahanMakananMap.get(bahan.bahanMakananId) ?? {
           day: todayDate,
-          bahanMakananId: bahan.id,
+          bahanMakananId: bahan.bahanMakananId,
           treatmentClassId: item.treatmentClassId,
           quantity: 0,
         };
-        dailyBahanMakananMap.set(bahan.id, {
+        dailyBahanMakananMap.set(bahan.bahanMakananId, {
           ...prev,
-          quantity: prev.quantity! + bahan.standard * item.count,
+          quantity: prev.quantity! + bahan.bahanMakananId * item.count,
         });
       }
     }
