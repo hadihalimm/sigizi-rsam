@@ -33,6 +33,20 @@ const dailyBahanMakananQuery = {
       })
     );
   },
+
+  useCreateDailyBahanMakanan: (date: string) => {
+    return useMutation(
+      orpc.dailyBahanMakanan.createDailyBahanMakanan.mutationOptions({
+        onSuccess: () => {
+          queryClient.invalidateQueries({
+            queryKey: orpc.dailyBahanMakanan.getAll.key({
+              input: { date: date },
+            }),
+          });
+        },
+      })
+    );
+  },
 };
 
 export { dailyBahanMakananQuery };

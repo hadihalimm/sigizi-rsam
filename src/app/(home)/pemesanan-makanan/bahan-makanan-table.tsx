@@ -9,9 +9,11 @@ import {
   getFilteredRowModel,
   useReactTable,
 } from "@tanstack/react-table";
+import { Plus } from "lucide-react";
 import { Suspense, useState } from "react";
 
 import AppDialog from "@/components/app-dialog";
+import { Button } from "@/components/ui/button";
 import { FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
@@ -28,7 +30,10 @@ import { capitalizeFirst } from "@/lib/utils";
 import { orpc } from "@/server/orpc";
 import { useDateStore } from "@/stores/use-date-store";
 
-import DailyBahanMakananForm from "./bahan-makanan-form";
+import {
+  DailyBahanMakananCreateForm,
+  DailyBahanMakananUpdateForm,
+} from "./bahan-makanan-form";
 
 const BahanMakananTables = () => {
   return (
@@ -56,7 +61,8 @@ const BahanMakananTable = ({ category }: BahanMakananTableProps) => {
     })
   );
 
-  const dialog = useAppDialog(`updateDailyBahanMakanan-${category}`);
+  const updateDialog = useAppDialog(`updateDailyBahanMakanan-${category}`);
+  const createDialog = useAppDialog(`createDailyBahanMakanan-${category}`);
   const [selectedItem, setSelectedItem] =
     useState<(typeof dailyBahanMakanan)[number]>();
 
@@ -127,7 +133,7 @@ const BahanMakananTable = ({ category }: BahanMakananTableProps) => {
         Pemesanan Bahan Makanan {capitalizeFirst(category)}
       </h2>
       <div className="flex gap-2 justify-between items-end">
-        <div className="flex flex-col gap-1 lg:w-1/3">
+        <div className="flex flex-col flex-1 gap-1 lg:w-1/3">
           <FieldLabel>Cari bahan makanan</FieldLabel>
           <Input
             value={
@@ -142,6 +148,16 @@ const BahanMakananTable = ({ category }: BahanMakananTableProps) => {
             }
           />
         </div>
+        <Button
+          className="flex-1 h-auto whitespace-normal break-words"
+          onClick={() => {
+            setSelectedItem(undefined);
+            createDialog.open();
+          }}
+        >
+          <Plus />
+          Tambah bahan makanan
+        </Button>
       </div>
 
       <div className="rounded-md border overflow-hidden">
@@ -181,7 +197,7 @@ const BahanMakananTable = ({ category }: BahanMakananTableProps) => {
                   className="cursor-pointer"
                   onClick={() => {
                     setSelectedItem(row.original);
-                    setTimeout(() => dialog.open(), 5);
+                    setTimeout(() => updateDialog.open(), 5);
                   }}
                 >
                   {row.getVisibleCells().map((cell) => (
@@ -213,7 +229,7 @@ const BahanMakananTable = ({ category }: BahanMakananTableProps) => {
 
       <AppDialog
         id={`updateDailyBahanMakanan-${category}`}
-        title="Edit Bahan Makanan"
+        title="Edit Bahan Makanan Harian"
         description={selectedItem?.bahanMakanan.name}
       >
         <Suspense
@@ -221,8 +237,24 @@ const BahanMakananTable = ({ category }: BahanMakananTableProps) => {
             <Spinner className="size-10 flex w-full justify-center items-center" />
           }
         >
-          <DailyBahanMakananForm
+          <DailyBahanMakananUpdateForm
             initialData={selectedItem}
+            pemesananDate={dayString}
+            category={category}
+          />
+        </Suspense>
+      </AppDialog>
+
+      <AppDialog
+        id={`createDailyBahanMakanan-${category}`}
+        title="Tambah Bahan Makanan Harian"
+      >
+        <Suspense
+          fallback={
+            <Spinner className="size-10 flex w-full justify-center items-center" />
+          }
+        >
+          <DailyBahanMakananCreateForm
             pemesananDate={dayString}
             category={category}
           />

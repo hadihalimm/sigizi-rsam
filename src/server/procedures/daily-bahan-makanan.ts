@@ -20,7 +20,10 @@ import {
   stockBahanMakanan,
   treatmentClass,
 } from "@/db/schema";
-import { DailyBahanMakananUpdateSchema } from "@/schemas/daily-bahan-makanan";
+import {
+  DailyBahanMakananCreateSchema,
+  DailyBahanMakananUpdateSchema,
+} from "@/schemas/daily-bahan-makanan";
 
 import { handleORPCError } from "../utils";
 
@@ -78,6 +81,27 @@ export const dailyBahanMakananProcedure = {
         return newRows;
       } catch (error) {
         console.error(error);
+        handleORPCError(error);
+      }
+    }),
+
+  createDailyBahanMakanan: os
+    .route({ path: "/", method: "POST" })
+    .input(DailyBahanMakananCreateSchema)
+    .handler(async ({ input }) => {
+      try {
+        const rows = await db.insert(dailyBahanMakanan).values(
+          input.dailyBahanMakanan
+            .filter((item) => item.quantity !== 0)
+            .map((item) => ({
+              ...item,
+              day: new Date(item.date),
+            }))
+        );
+
+        return rows;
+      } catch (error) {
+        console.log(error);
         handleORPCError(error);
       }
     }),
