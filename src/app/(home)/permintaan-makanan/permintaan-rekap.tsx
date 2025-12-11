@@ -1,7 +1,10 @@
 "use client";
 
 import { useSuspenseQuery } from "@tanstack/react-query";
+import { FileSpreadsheet } from "lucide-react";
+import { toast } from "sonner";
 
+import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import {
   Table,
@@ -62,11 +65,35 @@ const PermintaanRekap = () => {
     }
   });
 
+  const handleExport = async () => {
+    try {
+      const data = await orpc.dailyPermintaanMakanan.exportToExcel.call({
+        date: permintaanDate.toLocaleDateString("en-CA"),
+      });
+      const url = URL.createObjectURL(data);
+
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = data.name;
+      a.click();
+
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      toast.error(String(error));
+    }
+  };
+
   return (
     <div className="flex flex-col border rounded-md p-4 gap-6">
-      <h2 className="font-medium bg-primary/80 rounded-md w-fit px-2 py-1">
-        Rekap Permintaan Makanan
-      </h2>
+      <div className="flex justify-between items-center">
+        <h2 className="font-medium bg-primary/80 rounded-md w-fit px-2 py-1">
+          Rekap Permintaan Makanan
+        </h2>
+        <Button variant="outline" size="sm" onClick={handleExport}>
+          <FileSpreadsheet />
+          Export
+        </Button>
+      </div>
       <Table>
         <TableHeader>
           <TableRow>

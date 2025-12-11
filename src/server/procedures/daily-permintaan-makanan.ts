@@ -1,7 +1,8 @@
 import { os } from "@orpc/server";
 import { subDays } from "date-fns";
-import { and, desc, eq, sql } from "drizzle-orm";
+import { and, asc, desc, eq, sql } from "drizzle-orm";
 import { NodePgDatabase } from "drizzle-orm/node-postgres";
+import XLSX from "xlsx";
 import z from "zod";
 
 import db from "@/db";
@@ -306,6 +307,88 @@ export const dailyPermintaanMakananProcedure = {
           );
         });
       } catch (error) {
+        handleORPCError(error);
+      }
+    }),
+
+  exportToExcel: os
+    .route({ path: "/", method: "GET" })
+    .input(
+      z.object({
+        date: z.string(),
+      })
+    )
+    .handler(async ({ input }) => {
+      try {
+        const rows = await baseQuery(db)
+          .where(and(eq(dailyPermintaanMakanan.day, new Date(input.date))))
+          .orderBy(
+            asc(dailyPermintaanMakanan.makananTypeId),
+            asc(treatmentClass.id),
+            asc(bangsal.id)
+          );
+
+        const result = Array.from(
+          Map.groupBy(rows, (row) => row.daily_permintaan_makanan.id),
+          ([, group]) => ({
+            dailyPermintaanMakanan: group[0].daily_permintaan_makanan,
+            pasien: group[0].pasien,
+            ruangan: group[0].ruangan,
+            treatmentClass: group[0].treatment_class,
+            bangsal: group[0].bangsal,
+            makananType: group[0].makanan_type,
+            dailyPermintaanMakananDietList: Array.from(
+              new Map(
+                group.map((row) => [
+                  row.daily_permintaan_makanan_diet.dietId,
+                  { ...row.diet },
+                ])
+              ).values()
+            ),
+          })
+        );
+
+        const flat = result.map((item) => ({
+          id: item.dailyPermintaanMakanan.id,
+          tanggal: new Intl.DateTimeFormat("id-ID", {
+            day: "2-digit",
+            month: "long",
+            year: "numeric",
+          }).format(item.dailyPermintaanMakanan.day),
+          pasien: item.pasien.name,
+          kelas: item.treatmentClass.name,
+          ruangan: item.ruangan.name,
+          bangsal: item.bangsal.name,
+          jenisMakanan: item.makananType.name,
+
+          daftarDiet: item.dailyPermintaanMakananDietList
+            .map((d) => d.code)
+            .join(", "),
+        }));
+
+        const worksheet = XLSX.utils.json_to_sheet(flat);
+        worksheet["!cols"] = Object.keys(flat[0]).map((key) => {
+          const typedKey = key as keyof (typeof flat)[0];
+          const maxLength = Math.max(
+            key.length,
+            ...flat.map((row) =>
+              row[typedKey] ? row[typedKey].toString().length : 0
+            )
+          );
+          return { wch: maxLength + 2 };
+        });
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Permintaan");
+        const buffer = XLSX.write(workbook, {
+          bookType: "xlsx",
+          type: "array",
+        });
+
+        return new File([buffer], "permintaan.xlsx", {
+          type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        });
+      } catch (error) {
+        console.log(error);
         handleORPCError(error);
       }
     }),
