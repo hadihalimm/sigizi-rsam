@@ -24,7 +24,7 @@ export const auth = betterAuth({
   plugins: [
     username(),
     admin(),
-    customSession(async ({ user }) => {
+    customSession(async ({ user, session }) => {
       const record = await db.query.user.findFirst({
         columns: {
           role: true,
@@ -36,6 +36,7 @@ export const auth = betterAuth({
           ...user,
           role: record?.role,
         },
+        session,
       };
     }),
     nextCookies(),
