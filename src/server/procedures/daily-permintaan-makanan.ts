@@ -367,6 +367,22 @@ export const dailyPermintaanMakananProcedure = {
         }));
 
         const worksheet = XLSX.utils.json_to_sheet(flat);
+        XLSX.utils.sheet_add_aoa(
+          worksheet,
+          [
+            [
+              "ID",
+              "Tanggal",
+              "Pasien",
+              "Kelas",
+              "Ruangan",
+              "Bangsal",
+              "Jenis Makanan",
+              "Daftar Diet",
+            ],
+          ],
+          { origin: "A1" }
+        );
         worksheet["!cols"] = Object.keys(flat[0]).map((key) => {
           const typedKey = key as keyof (typeof flat)[0];
           const maxLength = Math.max(
