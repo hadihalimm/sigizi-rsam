@@ -13,7 +13,7 @@ export const user = pgTable("user", {
     .notNull(),
   username: text("username").unique(),
   displayUsername: text("display_username"),
-  role: text("role"),
+  role: text("role").notNull(),
   banned: boolean("banned").default(false),
   banReason: text("ban_reason"),
   banExpires: timestamp("ban_expires"),
