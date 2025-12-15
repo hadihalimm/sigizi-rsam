@@ -1,4 +1,5 @@
 import { ORPCError } from "@orpc/client";
+import { APIError } from "better-auth";
 import { DrizzleQueryError } from "drizzle-orm";
 import { DatabaseError } from "pg";
 
@@ -11,6 +12,11 @@ export function handleORPCError(error: unknown): never {
   } else if (error instanceof DatabaseError) {
     throw new ORPCError("INTERNAL_SERVER_ERROR", {
       message: "Postgres error",
+      data: error,
+    });
+  } else if (error instanceof APIError) {
+    throw new ORPCError("UNAUTHORIZED", {
+      message: "Better-Auth error",
       data: error,
     });
   } else {
