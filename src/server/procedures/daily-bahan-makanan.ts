@@ -1,4 +1,3 @@
-import { os } from "@orpc/server";
 import { and, asc, count, eq, sql, sum } from "drizzle-orm";
 import z from "zod";
 
@@ -25,10 +24,11 @@ import {
   DailyBahanMakananUpdateSchema,
 } from "@/schemas/daily-bahan-makanan";
 
+import { adminOnly, authorized } from "../middleware";
 import { handleORPCError } from "../utils";
 
 export const dailyBahanMakananProcedure = {
-  getAll: os
+  getAll: authorized
     .route({ path: "/", method: "GET" })
     .input(
       z.object({
@@ -43,7 +43,7 @@ export const dailyBahanMakananProcedure = {
       );
     }),
 
-  generateByDate: os
+  generateByDate: adminOnly
     .route({ path: "/", method: "POST" })
     .input(
       z.object({
@@ -85,7 +85,7 @@ export const dailyBahanMakananProcedure = {
       }
     }),
 
-  createDailyBahanMakanan: os
+  createDailyBahanMakanan: adminOnly
     .route({ path: "/", method: "POST" })
     .input(DailyBahanMakananCreateSchema)
     .handler(async ({ input }) => {
@@ -106,7 +106,7 @@ export const dailyBahanMakananProcedure = {
       }
     }),
 
-  updateDailyBahanMakanan: os
+  updateDailyBahanMakanan: adminOnly
     .route({ path: "/", method: "PUT" })
     .input(DailyBahanMakananUpdateSchema)
     .handler(async ({ input }) => {

@@ -1,4 +1,3 @@
-import { os } from "@orpc/server";
 import { eq } from "drizzle-orm";
 import z from "zod";
 
@@ -6,10 +5,11 @@ import db from "@/db";
 import { diet } from "@/db/schema";
 import { DietCreateSchema } from "@/schemas/diet";
 
+import { adminOnly, authorized } from "../middleware";
 import { handleORPCError } from "../utils";
 
 export const dietProcedure = {
-  getAll: os.route({ path: "/", method: "GET" }).handler(async () => {
+  getAll: authorized.route({ path: "/", method: "GET" }).handler(async () => {
     try {
       const rows = await db.query.diet.findMany();
 
@@ -19,7 +19,7 @@ export const dietProcedure = {
     }
   }),
 
-  create: os
+  create: adminOnly
     .route({ path: "/", method: "POST" })
     .input(DietCreateSchema)
     .handler(async ({ input }) => {
@@ -38,7 +38,7 @@ export const dietProcedure = {
       }
     }),
 
-  update: os
+  update: adminOnly
     .route({ path: "/{id}", method: "PUT", inputStructure: "detailed" })
     .input(
       z.object({
@@ -62,7 +62,7 @@ export const dietProcedure = {
       }
     }),
 
-  delete: os
+  delete: adminOnly
     .route({ path: "/{id}", method: "DELETE" })
     .input(z.object({ id: z.number() }))
     .handler(async ({ input }) => {

@@ -1,4 +1,3 @@
-import { os } from "@orpc/server";
 import { asc, eq } from "drizzle-orm";
 import z from "zod";
 
@@ -10,10 +9,11 @@ import {
   TreatmentClassCreateSchema,
 } from "@/schemas/ruangan";
 
+import { adminOnly, authorized } from "../middleware";
 import { handleORPCError } from "../utils";
 
 export const ruanganProcedure = {
-  getAll: os
+  getAll: authorized
     .route({ path: "/", method: "GET" })
     .input(z.object({ bangsalId: z.number().optional() }))
     .handler(async ({ input }) => {
@@ -30,7 +30,7 @@ export const ruanganProcedure = {
       }
     }),
 
-  create: os
+  create: adminOnly
     .route({ path: "/", method: "POST" })
     .input(RuanganCreateSchema)
     .handler(async ({ input }) => {
@@ -46,7 +46,7 @@ export const ruanganProcedure = {
       }
     }),
 
-  update: os
+  update: adminOnly
     .route({ path: "/{id}", method: "PUT", inputStructure: "detailed" })
     .input(
       z.object({
@@ -69,7 +69,7 @@ export const ruanganProcedure = {
       }
     }),
 
-  delete: os
+  delete: adminOnly
     .route({ path: "/{id}", method: "DELETE" })
     .input(z.object({ id: z.number() }))
     .handler(async ({ input }) => {
@@ -86,7 +86,7 @@ export const ruanganProcedure = {
 };
 
 export const bangsalProcedure = {
-  getAll: os.route({ path: "/", method: "GET" }).handler(async () => {
+  getAll: authorized.route({ path: "/", method: "GET" }).handler(async () => {
     try {
       const rows = await db.query.bangsal.findMany();
 
@@ -96,7 +96,7 @@ export const bangsalProcedure = {
     }
   }),
 
-  getAllWithRuangan: os
+  getAllWithRuangan: authorized
     .route({ path: "/", method: "GET" })
     .handler(async () => {
       try {
@@ -127,7 +127,7 @@ export const bangsalProcedure = {
       }
     }),
 
-  create: os
+  create: adminOnly
     .route({ path: "/", method: "POST" })
     .input(BangsalCreateSchema)
     .handler(async ({ input }) => {
@@ -143,7 +143,7 @@ export const bangsalProcedure = {
       }
     }),
 
-  update: os
+  update: adminOnly
     .route({ path: "/{id}", method: "PUT", inputStructure: "detailed" })
     .input(
       z.object({
@@ -165,7 +165,7 @@ export const bangsalProcedure = {
       }
     }),
 
-  delete: os
+  delete: adminOnly
     .route({ path: "/{id}", method: "DELETE" })
     .input(z.object({ id: z.number() }))
     .handler(async ({ input }) => {
@@ -181,13 +181,13 @@ export const bangsalProcedure = {
       }
     }),
 
-  syncFromSimrs: os
+  syncFromSimrs: adminOnly
     .route({ path: "/", method: "POST" })
     .handler(async ({ input }) => {}),
 };
 
 export const treatmentClassProcedure = {
-  getAll: os.route({ path: "/", method: "GET" }).handler(async () => {
+  getAll: authorized.route({ path: "/", method: "GET" }).handler(async () => {
     try {
       const rows = await db.query.treatmentClass.findMany();
 
@@ -197,7 +197,7 @@ export const treatmentClassProcedure = {
     }
   }),
 
-  create: os
+  create: adminOnly
     .route({ path: "/", method: "POST" })
     .input(TreatmentClassCreateSchema)
     .handler(async ({ input }) => {

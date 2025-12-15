@@ -6,10 +6,11 @@ import db from "@/db";
 import { alergi } from "@/db/schema";
 import { AlergiCreateSchema } from "@/schemas/alergi";
 
+import { adminOnly, authorized } from "../middleware";
 import { handleORPCError } from "../utils";
 
 export const alergiProcedure = {
-  getAll: os.route({ path: "/", method: "GET" }).handler(async () => {
+  getAll: authorized.route({ path: "/", method: "GET" }).handler(async () => {
     try {
       const rows = await db.query.alergi.findMany();
 
@@ -19,7 +20,7 @@ export const alergiProcedure = {
     }
   }),
 
-  create: os
+  create: adminOnly
     .route({ path: "/", method: "POST" })
     .input(AlergiCreateSchema)
     .handler(async ({ input }) => {
@@ -38,7 +39,7 @@ export const alergiProcedure = {
       }
     }),
 
-  update: os
+  update: adminOnly
     .route({ path: "/{id}", method: "PUT", inputStructure: "detailed" })
     .input(
       z.object({
@@ -63,7 +64,7 @@ export const alergiProcedure = {
       }
     }),
 
-  delete: os
+  delete: adminOnly
     .route({ path: "/{id}", method: "DELETE" })
     .input(z.object({ id: z.number() }))
     .handler(async ({ input }) => {

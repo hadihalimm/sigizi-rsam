@@ -1,4 +1,3 @@
-import { os } from "@orpc/server";
 import { eq } from "drizzle-orm";
 import z from "zod";
 
@@ -6,10 +5,11 @@ import db from "@/db";
 import { bahanMakanan } from "@/db/schema";
 import { BahanMakananCreateSchema } from "@/schemas/bahan-makanan";
 
+import { adminOnly, authorized } from "../middleware";
 import { handleORPCError } from "../utils";
 
 export const bahanMakananProcedure = {
-  getAll: os.route({ path: "/", method: "GET" }).handler(async () => {
+  getAll: authorized.route({ path: "/", method: "GET" }).handler(async () => {
     try {
       const records = await db.query.bahanMakanan.findMany({
         orderBy: (bahanMakanan, { asc }) => [asc(bahanMakanan.name)],
@@ -21,7 +21,7 @@ export const bahanMakananProcedure = {
     }
   }),
 
-  create: os
+  create: adminOnly
     .route({ path: "/", method: "POST" })
     .input(BahanMakananCreateSchema)
     .handler(async ({ input }) => {
@@ -42,7 +42,7 @@ export const bahanMakananProcedure = {
       }
     }),
 
-  update: os
+  update: adminOnly
     .route({ path: "/{id}", method: "PUT", inputStructure: "detailed" })
     .input(
       z.object({
@@ -69,7 +69,7 @@ export const bahanMakananProcedure = {
       }
     }),
 
-  delete: os
+  delete: adminOnly
     .route({ path: "/{id}", method: "DELETE" })
     .input(
       z.object({

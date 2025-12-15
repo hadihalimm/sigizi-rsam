@@ -1,4 +1,3 @@
-import { os } from "@orpc/server";
 import { and, asc, desc, eq, lte } from "drizzle-orm";
 import z from "zod";
 
@@ -10,10 +9,11 @@ import {
 } from "@/db/schema";
 import { StockBahanMakananHistoryCreateSchema } from "@/schemas/gudang";
 
+import { adminOnly, authorized } from "../middleware";
 import { handleORPCError } from "../utils";
 
 const stockBahanMakananProcedure = {
-  getAll: os
+  getAll: authorized
     .route({ path: "/", method: "GET" })
     .input(
       z
@@ -46,7 +46,7 @@ const stockBahanMakananProcedure = {
 };
 
 const stockBahanMakananHistoryProcedure = {
-  getAll: os.route({ path: "/", method: "GET" }).handler(async () => {
+  getAll: authorized.route({ path: "/", method: "GET" }).handler(async () => {
     try {
       const rows = await db.select().from(stockBahanMakananHistory);
       return rows;
@@ -55,7 +55,7 @@ const stockBahanMakananHistoryProcedure = {
     }
   }),
 
-  getById: os
+  getById: authorized
     .route({ path: "/{id}", method: "GET" })
     .input(
       z.object({
@@ -91,7 +91,7 @@ const stockBahanMakananHistoryProcedure = {
       }
     }),
 
-  create: os
+  create: adminOnly
     .route({ path: "/", method: "POST" })
     .input(StockBahanMakananHistoryCreateSchema)
     .handler(async ({ input }) => {

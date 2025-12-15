@@ -1,4 +1,3 @@
-import { os } from "@orpc/server";
 import { and, eq } from "drizzle-orm";
 import z from "zod";
 
@@ -18,10 +17,11 @@ import {
   DailyMenuDetailSchema,
 } from "@/schemas/daily-menu";
 
+import { adminOnly, authorized } from "../middleware";
 import { calculateMenuOrder, handleORPCError } from "../utils";
 
 export const dailyMenuProcedure = {
-  getAll: os
+  getAll: authorized
     .route({ path: "/", method: "GET" })
     .input(z.object({ date: z.string() }))
     .handler(async ({ input }) => {
@@ -66,7 +66,7 @@ export const dailyMenuProcedure = {
       }
     }),
 
-  create: os
+  create: adminOnly
     .route({ path: "/", method: "POST" })
     .input(DailyMenuCreateSchema)
     .handler(async ({ input }) => {
@@ -85,7 +85,7 @@ export const dailyMenuProcedure = {
       }
     }),
 
-  createManyByMenuBook: os
+  createManyByMenuBook: adminOnly
     .route({ path: "/", method: "POST" })
     .input(z.object({ menuBookId: z.number(), day: z.string() }))
     .handler(async ({ input }) => {
@@ -165,7 +165,7 @@ export const dailyMenuProcedure = {
 };
 
 export const dailyMenuDetailProcedure = {
-  update: os
+  update: adminOnly
     .route({ path: "/", method: "PUT", inputStructure: "detailed" })
     .input(
       z.object({

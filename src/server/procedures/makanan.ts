@@ -1,4 +1,3 @@
-import { os } from "@orpc/server";
 import { asc, DrizzleError, eq, sql } from "drizzle-orm";
 import z from "zod";
 
@@ -14,10 +13,11 @@ import {
   MakananTypeCreateSchema,
 } from "@/schemas/makanan";
 
+import { adminOnly, authorized } from "../middleware";
 import { handleORPCError } from "../utils";
 
 const makananProcedure = {
-  getAll: os.route({ path: "/", method: "GET" }).handler(async () => {
+  getAll: authorized.route({ path: "/", method: "GET" }).handler(async () => {
     try {
       const rows = await db
         .select()
@@ -51,7 +51,7 @@ const makananProcedure = {
     }
   }),
 
-  create: os
+  create: adminOnly
     .route({ path: "/", method: "POST" })
     .input(MakananCreateSchema)
     .handler(async ({ input }) => {
@@ -86,7 +86,7 @@ const makananProcedure = {
       }
     }),
 
-  update: os
+  update: adminOnly
     .route({ path: "/{id}", method: "PUT", inputStructure: "detailed" })
     .input(
       z.object({
@@ -166,7 +166,7 @@ const makananProcedure = {
       }
     }),
 
-  delete: os
+  delete: adminOnly
     .route({ path: "/{id}", method: "DELETE" })
     .input(
       z.object({
@@ -188,7 +188,7 @@ const makananProcedure = {
 };
 
 const makananTypeProcedure = {
-  getAll: os.route({ path: "/", method: "GET" }).handler(async () => {
+  getAll: authorized.route({ path: "/", method: "GET" }).handler(async () => {
     try {
       const rows = await db.query.makananType.findMany({
         orderBy: (makananType, { asc }) => [asc(makananType.id)],
@@ -200,7 +200,7 @@ const makananTypeProcedure = {
     }
   }),
 
-  create: os
+  create: adminOnly
     .route({ path: "/", method: "POST" })
     .input(MakananTypeCreateSchema)
     .handler(async ({ input }) => {
@@ -220,7 +220,7 @@ const makananTypeProcedure = {
       }
     }),
 
-  update: os
+  update: adminOnly
     .route({ path: "/{id}", method: "PUT" })
     .input(
       z.object({
@@ -245,7 +245,7 @@ const makananTypeProcedure = {
       }
     }),
 
-  delete: os
+  delete: adminOnly
     .route({ path: "/{id}", method: "DELETE" })
     .input(
       z.object({

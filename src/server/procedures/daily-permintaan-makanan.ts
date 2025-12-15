@@ -1,4 +1,3 @@
-import { os } from "@orpc/server";
 import { subDays } from "date-fns";
 import { and, asc, desc, eq, sql } from "drizzle-orm";
 import { NodePgDatabase } from "drizzle-orm/node-postgres";
@@ -21,10 +20,11 @@ import * as schema from "@/db/schema";
 import { DailyPermintaanMakananCreateSchema } from "@/schemas/daily-permintaan-makanan";
 import { DailyPermintaanMakananDetail } from "@/types/db";
 
+import { authorized } from "../middleware";
 import { handleORPCError } from "../utils";
 
 export const dailyPermintaanMakananProcedure = {
-  getAll: os
+  getAll: authorized
     .route({ path: "/", method: "GET" })
     .input(
       z.object({
@@ -67,7 +67,7 @@ export const dailyPermintaanMakananProcedure = {
       }
     }),
 
-  create: os
+  create: authorized
     .route({ path: "/", method: "POST" })
     .input(DailyPermintaanMakananCreateSchema)
     .handler(async ({ input }) => {
@@ -102,7 +102,7 @@ export const dailyPermintaanMakananProcedure = {
       }
     }),
 
-  update: os
+  update: authorized
     .route({ path: "/{id}", method: "PUT", inputStructure: "detailed" })
     .input(
       z.object({
@@ -212,7 +212,7 @@ export const dailyPermintaanMakananProcedure = {
       }
     }),
 
-  delete: os
+  delete: authorized
     .route({ path: "/{id}", method: "DELETE" })
     .input(z.object({ id: z.number() }))
     .handler(async ({ input }) => {
@@ -241,7 +241,7 @@ export const dailyPermintaanMakananProcedure = {
       }
     }),
 
-  copyFromYesterday: os
+  copyFromYesterday: authorized
     .route({ path: "/", method: "POST" })
     .input(z.object({ date: z.string() }))
     .handler(async ({ input }) => {
@@ -311,7 +311,7 @@ export const dailyPermintaanMakananProcedure = {
       }
     }),
 
-  exportToExcel: os
+  exportToExcel: authorized
     .route({ path: "/", method: "GET" })
     .input(
       z.object({
@@ -411,7 +411,7 @@ export const dailyPermintaanMakananProcedure = {
 };
 
 export const dailyPermintaanMakananLogProcedure = {
-  getAll: os
+  getAll: authorized
     .route({ path: "/", method: "GET" })
     .input(
       z.object({

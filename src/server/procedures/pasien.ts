@@ -1,4 +1,3 @@
-import { os } from "@orpc/server";
 import { and, eq, gt, ilike, inArray, or } from "drizzle-orm";
 import z from "zod";
 
@@ -7,10 +6,11 @@ import { alergi, pasien, pasienAlergi } from "@/db/schema";
 import { PasienCreateSchema } from "@/schemas/pasien";
 import { PasienAlergi } from "@/types/db";
 
+import { authorized } from "../middleware";
 import { handleORPCError } from "../utils";
 
 export const pasienProcedure = {
-  getAll: os
+  getAll: authorized
     .route({ path: "/", method: "GET" })
     .input(
       z.object({
@@ -72,7 +72,7 @@ export const pasienProcedure = {
       }
     }),
 
-  create: os
+  create: authorized
     .route({ path: "/", method: "POST" })
     .input(PasienCreateSchema)
     .handler(async ({ input }) => {
@@ -109,7 +109,7 @@ export const pasienProcedure = {
       }
     }),
 
-  update: os
+  update: authorized
     .route({ path: "/{id}", method: "PUT", inputStructure: "detailed" })
     .input(
       z.object({
@@ -157,7 +157,7 @@ export const pasienProcedure = {
       }
     }),
 
-  delete: os
+  delete: authorized
     .route({ path: "/{id}", method: "DELETE" })
     .input(z.object({ id: z.number() }))
     .handler(async ({ input }) => {
@@ -173,7 +173,7 @@ export const pasienProcedure = {
       }
     }),
 
-  findByMedicalRecordNumber: os
+  findByMedicalRecordNumber: authorized
     .route({ path: "/{id}", method: "GET" })
     .input(z.object({ medicalRecordNumber: z.string() }))
     .handler(async ({ input }) => {
@@ -188,7 +188,7 @@ export const pasienProcedure = {
       }
     }),
 
-  findFromSimrs: os
+  findFromSimrs: authorized
     .route({ path: "/{mrn}", method: "GET" })
     .input(z.object({ medicalRecordNumber: z.string() }))
     .handler(async ({ input }) => {

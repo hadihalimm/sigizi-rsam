@@ -1,4 +1,3 @@
-import { os } from "@orpc/server";
 import { asc, eq, sql } from "drizzle-orm";
 import z from "zod";
 
@@ -14,10 +13,11 @@ import {
 } from "@/db/schema";
 import { SnackCreateSchema } from "@/schemas/snack";
 
+import { adminOnly, authorized } from "../middleware";
 import { handleORPCError } from "../utils";
 
 export const snackProcedure = {
-  getAll: os.route({ path: "/", method: "GET" }).handler(async () => {
+  getAll: authorized.route({ path: "/", method: "GET" }).handler(async () => {
     try {
       const rows = await db
         .select()
@@ -73,7 +73,7 @@ export const snackProcedure = {
     }
   }),
 
-  create: os
+  create: adminOnly
     .route({ path: "/", method: "POST" })
     .input(SnackCreateSchema)
     .handler(async ({ input }) => {
@@ -129,7 +129,7 @@ export const snackProcedure = {
       }
     }),
 
-  update: os
+  update: adminOnly
     .route({ path: "/{id}", method: "PUT", inputStructure: "detailed" })
     .input(
       z.object({
@@ -260,7 +260,7 @@ export const snackProcedure = {
       }
     }),
 
-  delete: os
+  delete: adminOnly
     .route({ path: "/{id}", method: "DELETE" })
     .input(z.object({ id: z.number() }))
     .handler(async ({ input }) => {

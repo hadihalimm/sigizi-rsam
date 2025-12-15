@@ -1,4 +1,3 @@
-import { os } from "@orpc/server";
 import { eq } from "drizzle-orm";
 import z from "zod";
 
@@ -13,10 +12,11 @@ import {
 } from "@/db/schema";
 import { MenuBookCreateSchema, MenuCreateSchema } from "@/schemas/menu";
 
+import { adminOnly, authorized } from "../middleware";
 import { handleORPCError } from "../utils";
 
 export const menuProcedure = {
-  getAll: os
+  getAll: authorized
     .route({ path: "/", method: "GET" })
     .input(z.object({ menuBookId: z.number() }).optional())
     .handler(async ({ input }) => {
@@ -63,7 +63,7 @@ export const menuProcedure = {
       }
     }),
 
-  create: os
+  create: adminOnly
     .route({ path: "/", method: "POST" })
     .input(MenuCreateSchema)
     .handler(async ({ input }) => {
@@ -109,7 +109,7 @@ export const menuProcedure = {
       }
     }),
 
-  update: os
+  update: adminOnly
     .route({ path: "/{id}", method: "PUT", inputStructure: "detailed" })
     .input(
       z.object({
@@ -198,7 +198,7 @@ export const menuProcedure = {
       }
     }),
 
-  delete: os
+  delete: adminOnly
     .route({ path: "/{id}", method: "DELETE" })
     .input(z.object({ id: z.number() }))
     .handler(async ({ input }) => {
@@ -216,7 +216,7 @@ export const menuProcedure = {
 };
 
 export const menuBookProcedure = {
-  getAll: os.route({ path: "/", method: "GET" }).handler(async () => {
+  getAll: authorized.route({ path: "/", method: "GET" }).handler(async () => {
     try {
       const rows = await db.query.menuBook.findMany();
 
@@ -226,7 +226,7 @@ export const menuBookProcedure = {
     }
   }),
 
-  create: os
+  create: authorized
     .route({ path: "/", method: "POST" })
     .input(MenuBookCreateSchema)
     .handler(async ({ input }) => {
@@ -244,7 +244,7 @@ export const menuBookProcedure = {
       }
     }),
 
-  update: os
+  update: authorized
     .route({ path: "/", method: "PUT", inputStructure: "detailed" })
     .input(
       z.object({
@@ -268,7 +268,7 @@ export const menuBookProcedure = {
       }
     }),
 
-  delete: os
+  delete: authorized
     .route({ path: "/", method: "DELETE" })
     .input(z.object({ id: z.number() }))
     .handler(async ({ input }) => {
