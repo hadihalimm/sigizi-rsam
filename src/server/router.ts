@@ -1,4 +1,5 @@
 import { alergiProcedure } from "./procedures/alergi";
+import { authProcedure } from "./procedures/auth";
 import { bahanMakananProcedure } from "./procedures/bahan-makanan";
 import { dailyBahanMakananProcedure } from "./procedures/daily-bahan-makanan";
 import {
@@ -25,6 +26,7 @@ import {
 import { snackProcedure } from "./procedures/snack";
 
 export const router = {
+  auth: authProcedure,
   bahanMakanan: bahanMakananProcedure,
   makanan: makananProcedure,
   makananType: makananTypeProcedure,
