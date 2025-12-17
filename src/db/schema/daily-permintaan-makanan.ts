@@ -65,6 +65,7 @@ export const dailyPermintaanMakananLog = pgTable(
   "daily_permintaan_makanan_log",
   {
     id: serial("id").primaryKey(),
+    day: date("day", { mode: "date" }).notNull(),
     pasienId: integer("pasien_id").references(() => pasien.id, {
       onDelete: "set null",
     }),
@@ -77,13 +78,13 @@ export const dailyPermintaanMakananLog = pgTable(
     operation: text("operation").notNull(),
     oldValue: jsonb("old_value").$type<PermintaanMakananLogValue>(),
     newValue: jsonb("new_value").$type<PermintaanMakananLogValue>(),
-    changedAt: timestamp("changed_at", { withTimezone: true })
+    createdAt: timestamp("created_at", { withTimezone: true })
       .defaultNow()
       .notNull(),
     performedByUserId: text("performed_by_user_id").notNull(),
   },
   (table) => [
-    index("daily_permintaan_makanan_log_changed_at_idx").on(table.changedAt),
+    index("daily_permintaan_makanan_log_changed_at_idx").on(table.createdAt),
   ]
 );
 

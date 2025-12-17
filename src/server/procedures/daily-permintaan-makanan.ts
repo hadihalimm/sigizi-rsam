@@ -1,5 +1,5 @@
 import { subDays } from "date-fns";
-import { and, asc, desc, eq, sql } from "drizzle-orm";
+import { and, asc, desc, eq } from "drizzle-orm";
 import { NodePgDatabase } from "drizzle-orm/node-postgres";
 import XLSX from "xlsx";
 import z from "zod";
@@ -195,6 +195,7 @@ export const dailyPermintaanMakananProcedure = {
           const changes = generatePermintaanLog(oldResult, result);
           if (changes) {
             await tx.insert(dailyPermintaanMakananLog).values({
+              day: result.dailyPermintaanMakanan.day,
               pasienId: result.pasien.id,
               ruanganId: result.ruangan.id,
               bangsalId: result.bangsal.id,
@@ -228,6 +229,7 @@ export const dailyPermintaanMakananProcedure = {
           .innerJoin(bangsal, eq(ruangan.bangsalId, bangsal.id))
           .where(eq(ruangan.id, deletedRow.ruanganId));
         await db.insert(dailyPermintaanMakananLog).values({
+          day: deletedRow.day,
           pasienId: deletedRow.pasienId,
           ruanganId: deletedRow.ruanganId,
           bangsalId: bangsalId,
@@ -437,15 +439,8 @@ export const dailyPermintaanMakananLogProcedure = {
             bangsal,
             eq(dailyPermintaanMakananLog.bangsalId, bangsal.id)
           )
-          .where(
-            eq(
-              sql.raw(
-                `DATE(${dailyPermintaanMakananLog.changedAt.name} AT TIME ZONE 'Asia/Jakarta')`
-              ),
-              input.date
-            )
-          )
-          .orderBy(desc(dailyPermintaanMakananLog.changedAt));
+          .where(eq(dailyPermintaanMakananLog.day, new Date(input.date)))
+          .orderBy(desc(dailyPermintaanMakananLog.createdAt));
 
         return rows;
       } catch (error) {

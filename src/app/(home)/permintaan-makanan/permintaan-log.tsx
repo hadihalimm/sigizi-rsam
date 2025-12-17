@@ -83,7 +83,7 @@ const PermintaanMakananLog = ({ className }: { className?: string }) => {
                   {new Intl.DateTimeFormat("id-ID", {
                     dateStyle: "medium",
                     timeStyle: "medium",
-                  }).format(log.dailyPermintaanMakananLog.changedAt)}
+                  }).format(log.dailyPermintaanMakananLog.createdAt)}
                 </p>
               </ItemTitle>
               <div>
