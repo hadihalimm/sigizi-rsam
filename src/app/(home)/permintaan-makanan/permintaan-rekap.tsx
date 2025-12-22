@@ -95,7 +95,7 @@ const PermintaanRekap = () => {
 
   return (
     <div className="flex flex-col border rounded-md p-4 gap-6">
-      <div className="flex justify-between items-start">
+      <div className="flex justify-between gap-4 items-start">
         <h2 className="font-medium bg-primary/80 rounded-md w-fit px-2 py-1">
           Rekap Permintaan Makanan
         </h2>
