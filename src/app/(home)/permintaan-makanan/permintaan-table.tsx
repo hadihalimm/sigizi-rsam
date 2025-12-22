@@ -117,7 +117,7 @@ const PermintaanMakananTable = () => {
           dateStyle: "medium",
           timeStyle: "medium",
         }).format(info.getValue()),
-      size: 100,
+      size: 110,
     }),
     columnHelper.display({
       id: "action",
