@@ -176,27 +176,33 @@ const PermintaanMakananTable = () => {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex gap-2 lg:w-1/2">
-        <DatePicker
-          value={permintaanDate}
-          onValueChange={(value) => setDate("permintaanDate", value!)}
-          className="w-1/2"
-        />
-        <Select
-          value={currentBangsal}
-          onValueChange={(value) => setCurrentBangsal(value)}
-        >
-          <SelectTrigger className="w-1/2 hover:bg-primary hover:text-primary-foreground">
-            <SelectValue placeholder="Pilih bangsal..." />
-            <SelectContent>
-              <SelectItem value={"all"}>All</SelectItem>
-              {bangsalList.map((bangsal) => (
-                <SelectItem key={bangsal.id} value={bangsal.id.toString()}>
-                  {bangsal.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </SelectTrigger>
-        </Select>
+        <Field>
+          <FieldLabel>Tanggal</FieldLabel>
+          <DatePicker
+            value={permintaanDate}
+            onValueChange={(value) => setDate("permintaanDate", value!)}
+            className="w-1/2"
+          />
+        </Field>
+        <Field>
+          <FieldLabel>Bangsal</FieldLabel>
+          <Select
+            value={currentBangsal}
+            onValueChange={(value) => setCurrentBangsal(value)}
+          >
+            <SelectTrigger className="w-1/2 hover:bg-primary hover:text-primary-foreground">
+              <SelectValue placeholder="Pilih bangsal..." />
+              <SelectContent>
+                <SelectItem value={"all"}>All</SelectItem>
+                {bangsalList.map((bangsal) => (
+                  <SelectItem key={bangsal.id} value={bangsal.id.toString()}>
+                    {bangsal.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </SelectTrigger>
+          </Select>
+        </Field>
       </div>
       {data.length === 0 && currentBangsal === "all" && (
         <AppAlertDialog
