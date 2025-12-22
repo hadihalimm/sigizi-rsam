@@ -1,10 +1,11 @@
 "use client";
 
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { FileSpreadsheet } from "lucide-react";
+import { FileSpreadsheet, Printer } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
+import { ButtonGroup } from "@/components/ui/button-group";
 import { Separator } from "@/components/ui/separator";
 import {
   Table,
@@ -83,16 +84,31 @@ const PermintaanRekap = () => {
     }
   };
 
+  const handleGenerateDietTags = async () => {
+    try {
+      const date = permintaanDate.toLocaleDateString("en-CA");
+      window.open(`/api/print/diet-tag?date=${date}`, "_blank");
+    } catch (error) {
+      toast.error(String(error));
+    }
+  };
+
   return (
     <div className="flex flex-col border rounded-md p-4 gap-6">
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-start">
         <h2 className="font-medium bg-primary/80 rounded-md w-fit px-2 py-1">
           Rekap Permintaan Makanan
         </h2>
-        <Button variant="outline" size="sm" onClick={handleExport}>
-          <FileSpreadsheet />
-          Export
-        </Button>
+        <ButtonGroup>
+          <Button variant="outline" size="sm" onClick={handleExport}>
+            <FileSpreadsheet />
+            Excel
+          </Button>
+          <Button variant="outline" size="sm" onClick={handleGenerateDietTags}>
+            <Printer />
+            Etiket
+          </Button>
+        </ButtonGroup>
       </div>
       <Table>
         <TableHeader>
